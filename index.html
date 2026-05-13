@@ -350,11 +350,11 @@ body {
     <!-- DASHBOARD -->
     <div id="screen-dashboard" class="screen active">
       <p class="page-title">ภาพรวม</p>
-      <p class="page-sub">ยอดจองและรายได้เดือนพฤษภาคม 2568</p>
+      <p class="page-sub">ยอดจองและรายได้ล่าสุด</p>
       <div class="metric-grid">
-        <div class="metric-card"><div class="metric-ico ico-g">🎫</div><div class="metric-lbl">จองเดือนนี้</div><div class="metric-val" id="m-bk">0</div><div class="metric-note">-</div></div>
-        <div class="metric-card"><div class="metric-ico ico-t">฿</div><div class="metric-lbl">รายได้รวม</div><div class="metric-val" id="m-rev">฿0</div><div class="metric-note">0 × ฿3,500</div></div>
-        <div class="metric-card"><div class="metric-ico ico-a">💸</div><div class="metric-lbl">ค่าคอมรวม</div><div class="metric-val" id="m-comm">฿0</div><div class="metric-note">0 × ฿500/ลำ</div></div>
+        <div class="metric-card"><div class="metric-ico ico-g">🎫</div><div class="metric-lbl">จองทั้งหมด</div><div class="metric-val" id="m-bk">0</div><div class="metric-note">-</div></div>
+        <div class="metric-card"><div class="metric-ico ico-t">฿</div><div class="metric-lbl">รายได้รวม</div><div class="metric-val" id="m-rev">฿0</div><div class="metric-note">อิงจากยอดลำ</div></div>
+        <div class="metric-card"><div class="metric-ico ico-a">💸</div><div class="metric-lbl">ค่าคอมรวม</div><div class="metric-val" id="m-comm">฿0</div><div class="metric-note">฿500/ลำ</div></div>
         <div class="metric-card"><div class="metric-ico ico-b">🏨</div><div class="metric-lbl">โรงแรมพาร์ทเนอร์</div><div class="metric-val" id="m-ht">0</div><div class="metric-note">ที่ใช้งานอยู่</div></div>
       </div>
       <div class="two-col">
@@ -399,9 +399,9 @@ body {
       <p class="page-title">สรุปคอมมิชชั่น</p>
       <p class="page-sub">ยอดค่าคอมที่ต้องจ่ายให้แต่ละโรงแรม (฿500 / ลำ)</p>
       <div class="metric-grid" style="grid-template-columns:repeat(3,1fr);">
-        <div class="metric-card"><div class="metric-ico ico-a">⏳</div><div class="metric-lbl">รอจ่าย</div><div class="metric-val" id="c-pending">฿0</div><div class="metric-note">0 ลำ</div></div>
+        <div class="metric-card"><div class="metric-ico ico-a">⏳</div><div class="metric-lbl">รอจ่าย</div><div class="metric-val" id="c-pending">฿0</div><div class="metric-note">รวมทั้งหมด</div></div>
         <div class="metric-card"><div class="metric-ico ico-g">✅</div><div class="metric-lbl">จ่ายแล้วเดือนนี้</div><div class="metric-val">฿0</div><div class="metric-note up">0 ลำ</div></div>
-        <div class="metric-card"><div class="metric-ico ico-b">📅</div><div class="metric-lbl">รอบจ่ายถัดไป</div><div class="metric-val" style="font-size:16px;">1 มิ.ย. 68</div><div class="metric-note">-</div></div>
+        <div class="metric-card"><div class="metric-ico ico-b">📅</div><div class="metric-lbl">รอบจ่ายถัดไป</div><div class="metric-val" style="font-size:16px;">เช็กในระบบ</div><div class="metric-note">-</div></div>
       </div>
       <div class="card"><div class="card-title">แยกตามโรงแรม</div><div class="comm-grid" id="comm-grid"></div></div>
       <div class="card"><div class="card-title">ประวัติการจ่าย</div><div id="comm-hist"></div></div>
@@ -410,7 +410,7 @@ body {
     <!-- SETTINGS -->
     <div id="screen-settings" class="screen">
       <p class="page-title">ตั้งค่าระบบ</p>
-      <p class="page-sub">กำหนดบัญชีธนาคาร, LINE OA Token และข้อมูลธุรกิจ</p>
+      <p class="page-sub">กำหนดบัญชีธนาคาร และข้อมูลธุรกิจ</p>
 
       <div class="card">
         <div class="card-title">🏦 บัญชีธนาคาร (แสดงให้ลูกค้าโอนเงิน)</div>
@@ -441,33 +441,6 @@ body {
       </div>
 
       <div class="card">
-        <div class="card-title">📲 LINE OA (แจ้งเตือนเมื่อมีการจอง)</div>
-        <div class="setting-row">
-          <div class="setting-label"><strong>Channel Access Token</strong><span>จาก LINE Developers Console</span></div>
-          <div class="setting-input">
-            <input type="text" id="cfg-line-token" value="3793971c389b46bd7f07901d566e1bbf" placeholder="วาง Channel Access Token ที่นี่" onchange="saveSettings()">
-            <div style="font-size:11px; color:var(--n400); margin-top:5px;">
-              สมัครที่ <a href="https://developers.line.biz/" target="_blank" style="color:var(--g400);">developers.line.biz</a> → สร้าง Messaging API channel → คัดลอก Channel Access Token
-            </div>
-          </div>
-        </div>
-        <div class="setting-row">
-          <div class="setting-label"><strong>User ID / Group ID</strong><span>ปลายทางรับข้อความ</span></div>
-          <div class="setting-input">
-            <input type="text" id="cfg-line-uid" value="2007208453" placeholder="Uxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" onchange="saveSettings()">
-            <div style="font-size:11px; color:var(--n400); margin-top:5px;">ส่งข้อความหา LINE OA แล้วดู User ID ใน Webhook หรือใช้ <code style="background:var(--n100);padding:1px 4px;border-radius:3px;">@linebot getid</code></div>
-          </div>
-        </div>
-        <div class="setting-row" style="border:none;">
-          <div class="setting-label"></div>
-          <div class="setting-input">
-            <button class="btn-primary" onclick="testLine()">📤 ทดสอบส่งข้อความ</button>
-            <div class="setting-saved" id="line-test-result"></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
         <div class="card-title">🚣 ข้อมูลธุรกิจ</div>
         <div class="setting-row">
           <div class="setting-label"><strong>ชื่อธุรกิจ</strong></div>
@@ -478,8 +451,8 @@ body {
           <div class="setting-input"><input type="number" id="cfg-cap" value="6" min="1" max="20" onchange="saveSettings()"></div>
         </div>
         <div class="setting-row" style="border:none;">
-          <div class="setting-label"><strong>Base URL ระบบ</strong><span>ใส่หลัง deploy</span></div>
-          <div class="setting-input"><input type="text" id="cfg-url" value="https://longkaeng.com/จอง" onchange="saveSettings()"></div>
+          <div class="setting-label"><strong>Base URL ระบบ</strong><span>ใช้ URL จากการ Deploy</span></div>
+          <div class="setting-input"><input type="text" id="cfg-url" placeholder="วาง URL ที่ได้จาก Deploy ที่นี่" onchange="saveSettings()"></div>
         </div>
       </div>
 
@@ -495,7 +468,7 @@ body {
   <div class="bk-header">
     <h1 id="bk-biz-name">จองเรือล่องแก่ง</h1>
     <p>ประสบการณ์ล่องแก่งระดับธรรมชาติ</p>
-    <div class="bk-source-pill" id="bk-source-pill">🏨 <span id="bk-source-name">River View Hotel</span></div>
+    <div class="bk-source-pill" id="bk-source-pill">🏨 <span id="bk-source-name">ทั่วไป</span></div>
   </div>
 
   <!-- Steps -->
@@ -596,7 +569,7 @@ body {
           <div class="ref-detail" id="ref-detail"></div>
         </div>
         <div class="line-sent" id="line-sent-note">
-          📲 ส่งรายละเอียดไปยัง LINE OA แล้ว
+          📊 บันทึกข้อมูลเรียบร้อยแล้ว
         </div>
         <button class="btn-primary" style="margin-top:1rem; width:100%; justify-content:center;" onclick="resetBooking()">🔄 จองใหม่</button>
       </div>
@@ -625,8 +598,8 @@ body {
 const PRICE = 3500, COMM = 500;
 let CFG = {
   bank:'ktb', accno:'017-055487-2', accname:'บริษัท ศักดิ์สุภา ดีเวลลอปเม้นท์ จำกัด',
-  lineToken:'3793971c389b46bd7f07901d566e1bbf', lineUid:'2007208453', bizName:'ล่องแก่งสยาม', cap:6,
-  baseUrl:'https://saksupharafting.netlify.app'
+  bizName:'ล่องแก่งสยาม', cap:6,
+  baseUrl:''
 };
 const BANK_MAP = {
   kbank:{ name:'กสิกรไทย (KBANK)', cls:'kbank', icon:'🟢' },
@@ -635,10 +608,8 @@ const BANK_MAP = {
   ktb:  { name:'กรุงไทย (KTB)',    cls:'ktb',   icon:'🔷' },
 };
 
-let hotels = [];
-const recentData = [];
-
-let ppl=2, currentSource='rvh', currentSourceName='River View Hotel', slipData=null;
+let hotels = JSON.parse(localStorage.getItem('hotels') || '[]');
+let ppl=2, currentSource='general', currentSourceName='ทั่วไป', slipData=null;
 
 /* ── ADMIN NAV ── */
 function switchTab(el,id) {
@@ -646,6 +617,7 @@ function switchTab(el,id) {
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   el.classList.add('active');
   document.getElementById('screen-'+id).classList.add('active');
+  if(id==='dashboard') renderDash();
 }
 
 /* ── HELPERS ── */
@@ -653,79 +625,57 @@ function ini(n) { const p=n.trim().split(' '); return p.length>=2?(p[0][0]+p[1][
 function boats(p) { return Math.max(1,Math.ceil(p/CFG.cap)); }
 function fmt(n) { return '฿'+n.toLocaleString(); }
 
-/* ── DASHBOARD ── */
-async function renderDash() {
+/* ── DASHBOARD (Connect to GS) ── */
+function renderDash() {
   document.getElementById('recent-list').innerHTML='<div style="text-align:center;padding:1rem;color:var(--n400)">⏳ กำลังโหลด...</div>';
   
-  try {
-    const res = await fetch('https://script.google.com/macros/s/AKfycbyHbuNz-qY12lWKDR-5Aq2ckteEokYv446nn0UuZd_4J7zEeerrv_zF-0-h3GMqPzxgKg/exec');
-    const json = await res.json();
+  google.script.run.withSuccessHandler(function(json) {
     const rows = json.data || [];
 
     // คำนวณยอดรวม
     const tot = rows.length;
     const totalRev = rows.reduce((a,r) => a + (parseFloat((r['ยอดรวม']||'').replace(/[฿,]/g,''))||0), 0);
-    const totalComm = tot * COMM;
+    const totalComm = rows.reduce((a,r) => a + (parseInt(r['จำนวนลำ'])||0), 0) * COMM;
 
     document.getElementById('m-bk').textContent = tot;
-    document.getElementById('m-rev').textContent = fmt(totalRev||tot*PRICE);
+    document.getElementById('m-rev').textContent = fmt(totalRev);
     document.getElementById('m-comm').textContent = fmt(totalComm);
     document.getElementById('m-ht').textContent = hotels.length;
 
-    // กราฟรายสัปดาห์ (4 สัปดาห์ล่าสุด)
-    const now = new Date();
+    // กราฟรายสัปดาห์
     const wkCounts = [0,0,0,0];
+    const now = new Date();
     rows.forEach(r => {
-      const d = new Date(r['วันที่จอง']);
-      const diff = Math.floor((now - d) / (7*24*60*60*1000));
-      if(diff >= 0 && diff < 4) wkCounts[3-diff]++;
+        try {
+            const d = new Date(r['วันที่ทำรายการ']);
+            const diff = Math.floor((now - d) / (7*24*60*60*1000));
+            if(diff >= 0 && diff < 4) wkCounts[3-diff]++;
+        } catch(e) {}
     });
     const mx = Math.max(...wkCounts, 1);
-    const wks = ['สป.1','สป.2','สป.3','สป.4'];
     document.getElementById('wchart').innerHTML = wkCounts.map((v,i)=>`<div class="bar-col"><div class="bar-n">${v}</div><div class="bar${i===3?' hi':''}" style="height:${Math.round(v/mx*85)}px"></div></div>`).join('');
-    document.getElementById('wlabels').innerHTML = wks.map(w=>`<span>${w}</span>`).join('');
-
-    // ยอดตามโรงแรม
-    const hotelMap = {};
-    rows.forEach(r => {
-      const h = r['โรงแรม']||'ไม่ระบุ';
-      hotelMap[h] = (hotelMap[h]||0) + 1;
-    });
-    const hotelEntries = Object.entries(hotelMap).sort((a,b)=>b[1]-a[1]);
-    const hmx = Math.max(...hotelEntries.map(e=>e[1]), 1);
-    document.getElementById('source-bars').innerHTML = hotelEntries.length
-      ? hotelEntries.map(([name,cnt])=>`
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-          <div style="font-size:12px;color:var(--n600);width:130px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${name}</div>
-          <div style="flex:1;background:var(--n100);border-radius:4px;height:8px"><div style="width:${Math.round(cnt/hmx*100)}%;height:100%;background:var(--g400);border-radius:4px"></div></div>
-          <div style="font-size:12px;font-weight:600;width:20px;text-align:right">${cnt}</div>
-        </div>`).join('')
-      : '<div style="font-size:13px;color:var(--n400)">ยังไม่มีการจอง</div>';
+    document.getElementById('wlabels').innerHTML = ['3 สัปดาห์ก่อน','2 สัปดาห์ก่อน','สัปดาห์ก่อน','สัปดาห์นี้'].map(w=>`<span>${w}</span>`).join('');
 
     // รายการจองล่าสุด
-    const recent = rows.slice().reverse().slice(0,5);
+    const recent = rows.slice().reverse().slice(0,10);
     document.getElementById('recent-list').innerHTML = recent.length
       ? recent.map(b=>`
         <div class="brow">
-          <div class="avi">${ini(b['ชื่อ']||'?')}</div>
+          <div class="avi">${ini(b['ชื่อลูกค้า']||'?')}</div>
           <div style="flex:1">
-            <div class="bname">${b['ชื่อ']||'-'}</div>
-            <div class="bdetail">${b['วันเดินทาง']||''} · ${b['เวลา']||''} · ${b['จำนวนคน']||''}คน · ${b['จำนวนลำ']||''}ลำ</div>
+            <div class="bname">${b['ชื่อลูกค้า']||'-'}</div>
+            <div class="bdetail">${b['วันที่เดินทาง']||''} · ${b['เวลา']||''} · ${b['จำนวนคน']||''}คน</div>
           </div>
           <div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px">
-            <span class="src-pill">${b['โรงแรม']||'-'}</span>
-            <span class="slip-badge ${b['สลิป']==='✅ มีสลิป'?'slip-ok':'slip-wait'}">${b['สลิป']||'⏳ รอสลิป'}</span>
+            <span class="src-pill">${b['โรงแรมพาร์ทเนอร์']||'-'}</span>
+            ${b['ลิงก์สลิป'] && b['ลิงก์สลิป'] !== "ไม่มีสลิป" ? `<a href="${b['ลิงก์สลิป']}" target="_blank" class="slip-badge slip-ok">ดูสลิป</a>` : '<span class="slip-badge slip-wait">ไม่มีสลิป</span>'}
           </div>
           <div style="text-align:right;margin-left:10px">
             <div class="bamt">${b['ยอดรวม']||'-'}</div>
-            <div class="bcomm">คอม ${fmt(COMM)}</div>
           </div>
         </div>`).join('')
       : '<div style="font-size:13px;color:var(--n400);padding:1rem 0">ยังไม่มีการจอง</div>';
-
-  } catch(e) {
-    document.getElementById('recent-list').innerHTML='<div style="font-size:13px;color:var(--r400);padding:1rem 0">❌ โหลดข้อมูลไม่ได้ กรุณารีเฟรช</div>';
-  }
+  }).getDashboardData();
 }
 
 /* ── HOTELS ── */
@@ -734,33 +684,20 @@ function renderHotels() {
   document.getElementById('htbody').innerHTML=hotels.map(h=>`
     <tr>
       <td><strong>${h.name}</strong></td>
-      <td>${h.bookings} ลำ</td>
-      <td>${fmt(h.bookings*PRICE)}</td>
+      <td>-</td>
+      <td>-</td>
       <td><span class="cpill">${fmt(COMM)}/ลำ</span></td>
-      <td style="font-weight:600;color:var(--a400)">${fmt(h.bookings*COMM)}</td>
+      <td style="font-weight:600;color:var(--a400)">-</td>
       <td><button class="btn-qr" onclick="showQR('${h.id}','${h.name}')">🔲 QR Code</button></td>
     </tr>`).join('');
 }
 function addHotel() {
   const nm=document.getElementById('new-name').value.trim();
   if(!nm){alert('กรุณากรอกชื่อโรงแรม');return;}
-  hotels.push({id:'h'+Date.now(),name:nm,bookings:0});
+  hotels.push({id:'h'+Date.now(),name:nm});
+  localStorage.setItem('hotels', JSON.stringify(hotels));
   document.getElementById('new-name').value='';
-  renderHotels(); renderDash(); renderCommission();
-}
-
-/* ── COMMISSION ── */
-function renderCommission() {
-  const tot=hotels.reduce((a,h)=>a+h.bookings,0);
-  document.getElementById('c-pending').textContent=fmt(tot*COMM);
-  document.getElementById('comm-grid').innerHTML=hotels.map(h=>`
-    <div class="ccard"><div class="cname">${h.name}</div><div class="csub">${h.bookings} ลำ</div><div class="cowed">${fmt(h.bookings*COMM)}</div></div>`).join('');
-  document.getElementById('comm-hist').innerHTML=[
-
-  ].map(r=>`<div class="brow">
-    <div style="flex:1"><div class="bname">${r.hotel}</div><div class="bdetail">${r.date} · ${r.boats} ลำ</div></div>
-    <div><div class="bamt">${fmt(r.boats*COMM)}</div><div style="font-size:11px;color:var(--g400);text-align:right;margin-top:2px">✓ จ่ายแล้ว</div></div>
-  </div>`).join('');
+  renderHotels();
 }
 
 /* ── SETTINGS ── */
@@ -768,8 +705,6 @@ function saveSettings(showMsg=false) {
   CFG.bank     = document.getElementById('cfg-bank').value;
   CFG.accno    = document.getElementById('cfg-accno').value;
   CFG.accname  = document.getElementById('cfg-accname').value;
-  CFG.lineToken= document.getElementById('cfg-line-token').value;
-  CFG.lineUid  = document.getElementById('cfg-line-uid').value;
   CFG.bizName  = document.getElementById('cfg-biz').value;
   CFG.cap      = parseInt(document.getElementById('cfg-cap').value)||6;
   CFG.baseUrl  = document.getElementById('cfg-url').value;
@@ -777,32 +712,6 @@ function saveSettings(showMsg=false) {
     const msg=document.getElementById('saved-msg');
     msg.style.display='inline'; setTimeout(()=>msg.style.display='none',2500);
   }
-}
-
-async function testLine() {
-  saveSettings();
-  const el=document.getElementById('line-test-result');
-  if(!CFG.lineToken||!CFG.lineUid){el.style.display='block';el.style.color='var(--r400)';el.textContent='⚠️ กรุณากรอก Token และ User ID ก่อน';return;}
-  el.style.display='block';el.style.color='var(--n400)';el.textContent='⏳ กำลังส่ง...';
-  const ok=await sendLine(`🧪 ทดสอบระบบแจ้งเตือน\n✅ LINE OA เชื่อมต่อสำเร็จ\n🚣 ${CFG.bizName}`);
-  el.style.color=ok?'var(--g400)':'var(--r400)';
-  el.textContent=ok?'✅ ส่งสำเร็จ! ตรวจสอบ LINE ของคุณ':'❌ ส่งไม่สำเร็จ — ตรวจสอบ Token และ User ID อีกครั้ง';
-}
-
-/* ── LINE NOTIFY ── */
-async function sendLine(text) {
-  return false; // LINE disabled
-}
-
-async function saveToSheet(data) {
-  try {
-    const res = await fetch('https://script.google.com/macros/s/AKfycbyHbuNz-qY12lWKDR-5Aq2ckteEokYv446nn0UuZd_4J7zEeerrv_zF-0-h3GMqPzxgKg/exec', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    });
-    return res.ok;
-  } catch(e) { return false; }
 }
 
 /* ── CUSTOMER BOOKING ── */
@@ -813,10 +722,6 @@ function previewCustomer() {
   document.getElementById('bk-biz-name').textContent='จองเรือล่องแก่ง — '+CFG.bizName;
   updateBankUI();
   goStep1();
-}
-function backToAdmin() {
-  document.getElementById('admin-shell').style.display='flex';
-  document.getElementById('booking-page').classList.remove('show');
 }
 
 function updateBankUI() {
@@ -867,7 +772,6 @@ function triggerUpload() { document.getElementById('slip-input').click(); }
 function handleSlip(e) {
   const file=e.target.files[0];
   if(!file)return;
-  if(file.size>5*1024*1024){alert('ไฟล์ใหญ่เกิน 5MB');return;}
   const reader=new FileReader();
   reader.onload=ev=>{
     slipData=ev.target.result;
@@ -887,6 +791,10 @@ function removeSlip() {
 }
 
 async function submitBooking() {
+  const btn = document.getElementById('btn-submit');
+  btn.disabled = true;
+  btn.textContent = '⏳ กำลังบันทึก...';
+
   const name=document.getElementById('b-name').value.trim();
   const phone=document.getElementById('b-phone').value.trim();
   const date=document.getElementById('b-date').value;
@@ -895,13 +803,7 @@ async function submitBooking() {
   const total=b*PRICE;
   const refNo='RR-'+new Date().getFullYear()+'-'+String(Math.floor(Math.random()*9000)+1000);
 
-  document.getElementById('ref-no').textContent=refNo;
-  document.getElementById('ref-detail').innerHTML=
-    `ชื่อ: ${name}\nโทร: ${phone}\nวันที่: ${date} เวลา ${time}\nจำนวน: ${ppl} คน · ${b} ลำ\nยอดรวม: ${fmt(total)}\nโรงแรม: ${currentSourceName}`
-    .split('\n').join('<br>');
-
-  /* ── บันทึกลง Google Sheet ── */
-  const ok = await saveToSheet({
+  const bookingData = {
     ref_no: refNo,
     date: date,
     time: time,
@@ -911,10 +813,28 @@ async function submitBooking() {
     boats: b,
     amount: fmt(total),
     hotel: currentSourceName,
-    slip: !!slipData
-  });
-  document.getElementById('line-sent-note').textContent = ok ? '📊 บันทึกลง Google Sheet แล้ว' : '📋 บันทึกการจองแล้ว';
-  setStep(3);
+    slipBase64: slipData
+  };
+
+  google.script.run.withSuccessHandler(function(res) {
+    if(res.status === "success") {
+      document.getElementById('ref-no').textContent=refNo;
+      document.getElementById('ref-detail').innerHTML=
+        `ชื่อ: ${name}
+โทร: ${phone}
+วันที่: ${date} เวลา ${time}
+จำนวน: ${ppl} คน · ${b} ลำ
+ยอดรวม: ${fmt(total)}
+โรงแรม: ${currentSourceName}`
+        .split('
+').join('<br>');
+      setStep(3);
+    } else {
+      alert("เกิดข้อผิดพลาด: " + res.message);
+      btn.disabled = false;
+      btn.textContent = '✅ ยืนยันการจองและส่งสลิป';
+    }
+  }).submitBookingToServer(bookingData);
 }
 
 function resetBooking() {
@@ -925,7 +845,7 @@ function resetBooking() {
   document.getElementById('ppl-n').textContent=2;
   document.getElementById('boat-cnt').textContent='× 1 ลำ';
   document.getElementById('price-total').textContent='฿3,500';
-  document.getElementById('cap-note').textContent=`บรรจุสูงสุด ${CFG.cap} คน / ลำ`;
+  document.getElementById('btn-submit').textContent = '✅ ยืนยันการจองและส่งสลิป';
   removeSlip();
   setStep(1);
 }
@@ -934,7 +854,6 @@ function resetBooking() {
 function showQR(id,name) {
   currentSource=id; currentSourceName=name;
   document.getElementById('qr-hotel').textContent=name;
-  document.getElementById('qr-sub').textContent='วาง QR นี้ที่ Lobby หรือห้องพัก';
   const url=`${CFG.baseUrl}?source=${id}`;
   document.getElementById('qr-url').textContent=url;
   const frame=document.getElementById('qr-frame'); frame.innerHTML='';
@@ -950,14 +869,13 @@ function dlQR(){
   },100);
 }
 
-/* ── QR from URL param (when customer scans) ── */
 function checkUrlSource() {
   const p=new URLSearchParams(window.location.search);
   const src=p.get('source');
   if(src){
     const h=hotels.find(h=>h.id===src);
     currentSource=src;
-    currentSourceName=h?h.name:src;
+    currentSourceName=h?h.name:'ทั่วไป';
     document.getElementById('bk-source-name').textContent=currentSourceName;
     document.getElementById('admin-shell').style.display='none';
     document.getElementById('booking-page').classList.add('show');
@@ -966,8 +884,9 @@ function checkUrlSource() {
 
 /* ── INIT ── */
 document.getElementById('b-date').value=new Date().toISOString().split('T')[0];
-renderDash(); renderHotels(); renderCommission();
+renderHotels();
 checkUrlSource();
+if (document.getElementById('admin-shell').style.display !== 'none') renderDash();
 </script>
 </body>
 </html>

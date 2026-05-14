@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ศักดิ์สุภา ล่องแก่งหินเพิง — จองเรือ</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600&family=Noto+Serif+Thai:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --g50:#E8F5F0;--g100:#A8DECE;--g300:#3DB88A;--g400:#1D9E75;--g600:#0F6E56;--g800:#085041;
+  --a50:#FFF8EC;--a300:#FAC775;--a400:#BA7517;--a800:#633806;
+  --n0:#fff;--n50:#F7F6F3;--n100:#EEECEA;--n200:#D4D2CA;--n400:#9B9991;--n600:#5F5E5A;--n800:#2C2C2A;
+  --r400:#E53935;--r50:#FFEBEE;
+  --rad:14px;--radsm:8px;
+  --font-th:'Sarabun',sans-serif;
+  --font-serif:'Noto Serif Thai',serif;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--font-th);background:var(--n50);color:var(--n800);min-height:100vh}
+
+/* ── ADMIN SHELL ── */
+.shell{display:flex;min-height:100vh}
+.sidebar{width:220px;flex-shrink:0;background:var(--n800);display:flex;flex-direction:column}
+.sb-brand{padding:1.5rem 1.25rem 1rem;border-bottom:1px solid rgba(255,255,255,.07)}
+.sb-icon{width:38px;height:38px;border-radius:10px;background:var(--g400);display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:10px}
+.sb-name{font-family:var(--font-serif);font-size:14px;font-weight:700;color:#fff}
+.sb-sub{font-size:11px;color:var(--n400);margin-top:2px}
+.sb-nav{padding:1rem .75rem;flex:1}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;cursor:pointer;font-size:13px;color:var(--n400);transition:all .15s;margin-bottom:2px}
+.nav-item:hover{background:rgba(255,255,255,.06);color:#fff}
+.nav-item.active{background:var(--g400);color:#fff}
+.main{flex:1;overflow-y:auto;padding:2rem}
+.screen{display:none}.screen.active{display:block}
+.pg-title{font-family:var(--font-serif);font-size:22px;font-weight:700;margin-bottom:4px}
+.pg-sub{font-size:13px;color:var(--n400);margin-bottom:1.5rem}
+
+/* ── METRICS ── */
+.mgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:1.5rem}
+.mcard{background:var(--n0);border-radius:var(--rad);padding:1.1rem 1.25rem;border:1px solid var(--n100)}
+.mico{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;margin-bottom:10px}
+.ico-g{background:var(--g50);color:var(--g600)}.ico-a{background:var(--a50);color:var(--a400)}.ico-b{background:#EBF5FF;color:#1565C0}.ico-t{background:#E0F7FA;color:#00838F}
+.mlbl{font-size:11px;color:var(--n400);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+.mval{font-size:24px;font-weight:600;line-height:1}
+.mnote{font-size:11px;color:var(--n400);margin-top:5px}
+.mnote.up{color:var(--g400)}
+
+/* ── CARD ── */
+.card{background:var(--n0);border-radius:var(--rad);border:1px solid var(--n100);padding:1.25rem 1.5rem;margin-bottom:1.25rem}
+.card-title{font-size:11px;font-weight:600;color:var(--n400);text-transform:uppercase;letter-spacing:.06em;margin-bottom:1rem}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
+
+/* ── BAR CHART ── */
+.bwrap{display:flex;align-items:flex-end;gap:8px;height:90px}
+.bcol{display:flex;flex-direction:column;align-items:center;flex:1;gap:4px}
+.bbar{width:100%;border-radius:4px 4px 0 0;background:var(--g100)}
+.bbar.hi{background:var(--g400)}
+.blbl{font-size:10px;color:var(--n400)}
+.bnum{font-size:10px;font-weight:600;color:var(--n600)}
+.blabels{display:flex;gap:8px;margin-top:5px}
+.blabels span{flex:1;text-align:center;font-size:10px;color:var(--n400)}
+
+/* ── BOOKING LIST ── */
+.brow{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--n100)}
+.brow:last-child{border-bottom:none}
+.avi{width:36px;height:36px;border-radius:50%;background:var(--g50);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--g600);flex-shrink:0}
+.bname{font-size:13px;font-weight:500}
+.bdetail{font-size:11px;color:var(--n400);margin-top:2px}
+.src-pill{font-size:10px;padding:2px 8px;background:var(--g50);color:var(--g600);border-radius:20px;font-weight:500;white-space:nowrap}
+.bamt{font-size:13px;font-weight:600;white-space:nowrap;text-align:right}
+.bcomm{font-size:10px;color:var(--a400);text-align:right;margin-top:2px}
+.slip-ok{font-size:10px;padding:2px 8px;border-radius:20px;background:#E8F5E9;color:#2E7D32}
+.slip-wait{font-size:10px;padding:2px 8px;border-radius:20px;background:#FFF9C4;color:#F57F17}
+
+/* ── HOTEL TABLE ── */
+.htable{width:100%;border-collapse:collapse}
+.htable th{font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--n400);font-weight:500;text-align:left;padding:0 12px 10px;border-bottom:1px solid var(--n100)}
+.htable td{padding:11px 12px;font-size:13px;border-bottom:1px solid var(--n100);vertical-align:middle}
+.htable tr:last-child td{border-bottom:none}
+.htable tr:hover td{background:var(--n50)}
+.cpill{display:inline-block;font-size:11px;padding:2px 10px;background:var(--a50);color:var(--a400);border-radius:20px;font-weight:500}
+.btn-qr{display:inline-flex;align-items:center;gap:5px;font-size:12px;padding:5px 12px;background:none;border:1px solid var(--n200);border-radius:var(--radsm);cursor:pointer;color:var(--n600);font-family:var(--font-th);transition:all .15s}
+.btn-qr:hover{background:var(--n50);border-color:var(--n400)}
+.btn-del{display:inline-flex;align-items:center;font-size:12px;padding:5px 10px;background:none;border:1px solid var(--r50);border-radius:var(--radsm);cursor:pointer;color:var(--r400);font-family:var(--font-th);transition:all .15s;margin-left:4px}
+.btn-del:hover{background:var(--r50)}
+
+/* ── FORM ── */
+.fsec{background:var(--n50);border:1px dashed var(--n200);border-radius:var(--rad);padding:1.25rem 1.5rem;margin-bottom:1.25rem}
+.fsec h3{font-size:13px;font-weight:600;color:var(--n600);margin-bottom:1rem}
+.frow{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end}
+.fgrp{flex:1;min-width:140px}
+.fgrp label{font-size:11px;color:var(--n400);display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em}
+.fgrp input,.fgrp select{width:100%;padding:8px 12px;font-size:13px;border:1px solid var(--n200);border-radius:var(--radsm);background:var(--n0);color:var(--n800);font-family:var(--font-th);outline:none;transition:border-color .15s}
+.fgrp input:focus{border-color:var(--g400)}
+
+/* ── COMMISSION ── */
+.cgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.ccard{background:var(--n50);border:1px solid var(--n100);border-radius:var(--radsm);padding:.875rem 1rem}
+.cname{font-size:12px;font-weight:500;margin-bottom:3px}
+.csub{font-size:11px;color:var(--n400);margin-bottom:6px}
+.cowed{font-size:17px;font-weight:600;color:var(--a400)}
+
+/* ── BUTTONS ── */
+.btn-primary{background:var(--g400);color:#fff;border:none;padding:9px 20px;border-radius:var(--radsm);font-size:13px;font-weight:500;cursor:pointer;font-family:var(--font-th);display:inline-flex;align-items:center;gap:6px;transition:background .15s}
+.btn-primary:hover{background:var(--g600)}
+.btn-outline{padding:8px 16px;border:1px solid var(--n200);background:none;border-radius:var(--radsm);font-size:13px;cursor:pointer;color:var(--n800);font-family:var(--font-th);transition:all .15s}
+.btn-outline:hover{background:var(--n50)}
+
+/* ── CUSTOMER PAGE ── */
+.cust-page{display:none;min-height:100vh;background:var(--n50)}
+.cust-page.show{display:block}
+.cust-header{background:var(--g800);padding:2rem 1.25rem 1.5rem;text-align:center;position:relative;overflow:hidden}
+.cust-header::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 70% 30%,rgba(29,158,117,.3) 0%,transparent 60%);pointer-events:none}
+.cust-header h1{font-family:var(--font-serif);font-size:22px;font-weight:700;color:#fff;position:relative}
+.cust-header p{font-size:13px;color:var(--g100);margin-top:4px;position:relative}
+.src-badge{display:inline-flex;align-items:center;gap:5px;margin-top:10px;background:rgba(255,255,255,.13);color:var(--g100);font-size:11px;padding:4px 12px;border-radius:20px;position:relative}
+
+/* STEPS */
+.steps{display:flex;align-items:center;justify-content:center;padding:1.25rem 1rem .75rem;gap:0}
+.step{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--n400)}
+.step-num{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--n200);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;transition:all .15s;flex-shrink:0}
+.step.done .step-num{background:var(--g400);border-color:var(--g400);color:#fff}
+.step.active .step-num{background:var(--n800);border-color:var(--n800);color:#fff}
+.step.active{color:var(--n800);font-weight:500}
+.step-sep{width:32px;height:1.5px;background:var(--n200);margin:0 4px}
+.step-sep.done{background:var(--g400)}
+.panel{display:none}.panel.active{display:block}
+.cust-body{max-width:480px;margin:0 auto;padding:0 1rem 2rem}
+
+/* BOOKING CARD */
+.bk-card{background:var(--n0);border-radius:var(--rad);border:1px solid var(--n100);padding:1.25rem;margin-bottom:.875rem}
+.bk-card h2{font-size:12px;font-weight:600;color:var(--n400);text-transform:uppercase;letter-spacing:.06em;margin-bottom:1rem}
+.bfield{margin-bottom:13px}
+.bfield:last-child{margin-bottom:0}
+.bfield label{font-size:12px;color:var(--n600);display:block;margin-bottom:5px}
+.bfield input,.bfield select{width:100%;padding:10px 13px;font-size:14px;border:1.5px solid var(--n200);border-radius:var(--radsm);background:var(--n0);color:var(--n800);font-family:var(--font-th);outline:none;transition:border-color .15s}
+.bfield input:focus,.bfield select:focus{border-color:var(--g400);box-shadow:0 0 0 3px rgba(29,158,117,.12)}
+.brow2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.counter{display:flex;align-items:center;gap:10px}
+.c-btn{width:36px;height:36px;border:1.5px solid var(--n200);background:var(--n0);border-radius:8px;font-size:20px;cursor:pointer;color:var(--n800);display:flex;align-items:center;justify-content:center;transition:all .15s;line-height:1}
+.c-btn:hover{border-color:var(--g400);color:var(--g400)}
+.c-num{font-size:20px;font-weight:600;min-width:36px;text-align:center}
+.c-note{font-size:12px;color:var(--n400)}
+
+/* PRICE BOX */
+.price-box{background:var(--g800);border-radius:var(--rad);padding:1.1rem 1.25rem;margin-bottom:.875rem;color:#fff}
+.prow{display:flex;justify-content:space-between;font-size:13px;padding:4px 0;color:var(--g100)}
+.prow.ptotal{font-size:17px;font-weight:600;color:#fff;border-top:1px solid rgba(255,255,255,.15);padding-top:10px;margin-top:5px}
+.pcap{font-size:11px;color:var(--g100);margin-top:6px}
+
+/* BANK CARD */
+.bank-card{background:var(--n0);border-radius:var(--rad);border:1.5px solid var(--g400);padding:1.25rem;margin-bottom:.875rem}
+.bank-card h2{font-size:12px;font-weight:600;color:var(--n400);text-transform:uppercase;letter-spacing:.06em;margin-bottom:1rem}
+.bank-info{display:flex;align-items:center;gap:14px}
+.bank-logo{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;background:#1565C0;color:#fff}
+.bank-num{font-family:monospace;font-size:20px;font-weight:600;letter-spacing:.08em;color:var(--n800)}
+.bank-nm{font-size:13px;color:var(--n400);margin-top:2px}
+.bank-acname{font-size:14px;font-weight:500;color:var(--n800);margin-top:8px;border-top:1px solid var(--n100);padding-top:8px}
+.amt-due{background:var(--a50);border:1px solid var(--a300);border-radius:var(--radsm);padding:10px 14px;margin-top:10px;display:flex;align-items:center;justify-content:space-between}
+.amt-due span{font-size:13px;color:var(--a400)}
+.amt-due strong{font-size:18px;font-weight:600;color:var(--a800)}
+
+/* UPLOAD */
+.upload-zone{border:2px dashed var(--n200);border-radius:var(--rad);padding:2rem 1rem;text-align:center;cursor:pointer;transition:all .15s;background:var(--n50);position:relative}
+.upload-zone:hover,.upload-zone.drag{border-color:var(--g400);background:var(--g50)}
+.upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
+.upload-icon{font-size:36px;margin-bottom:10px;color:var(--n400)}
+.upload-zone p{font-size:13px;color:var(--n600)}
+.upload-zone small{font-size:11px;color:var(--n400);margin-top:4px;display:block}
+.slip-preview{display:none;border-radius:var(--rad);overflow:hidden;border:1px solid var(--n200);position:relative}
+.slip-preview img{width:100%;display:block;max-height:280px;object-fit:contain;background:var(--n100)}
+.slip-remove{position:absolute;top:8px;right:8px;background:rgba(0,0,0,.55);color:#fff;border:none;border-radius:50%;width:28px;height:28px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+
+/* SUCCESS */
+.success-wrap{text-align:center;padding:2rem 1rem}
+.success-circle{width:72px;height:72px;background:var(--g50);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem;font-size:30px;color:var(--g400)}
+.success-wrap h2{font-family:var(--font-serif);font-size:22px;font-weight:700;margin-bottom:6px}
+.success-wrap p{font-size:13px;color:var(--n400)}
+.ref-block{background:var(--g50);border-radius:var(--rad);padding:1rem 1.25rem;margin:1.1rem 0;text-align:left}
+.ref-num{font-size:20px;font-weight:700;color:var(--g800);margin-bottom:8px}
+.ref-detail{font-size:13px;color:var(--g600);line-height:1.9}
+.sheet-note{background:#E8F5E9;border-radius:var(--radsm);padding:10px 14px;font-size:12px;color:#2E7D32;display:flex;align-items:center;gap:8px;margin-top:8px}
+
+/* BTNS */
+.btn-book{width:100%;background:var(--g400);color:#fff;border:none;padding:14px;border-radius:var(--rad);font-size:15px;font-weight:600;cursor:pointer;font-family:var(--font-serif);display:flex;align-items:center;justify-content:center;gap:8px;transition:background .15s;margin-top:.5rem}
+.btn-book:hover{background:var(--g600)}
+.btn-book:disabled{background:var(--n200);cursor:not-allowed;color:var(--n400)}
+.btn-next{width:100%;background:var(--n800);color:#fff;border:none;padding:13px;border-radius:var(--rad);font-size:14px;font-weight:500;cursor:pointer;font-family:var(--font-th);display:flex;align-items:center;justify-content:center;gap:8px;transition:background .15s;margin-top:.5rem}
+.btn-next:hover{background:var(--n600)}
+
+/* QR MODAL */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center}
+.modal-bg.open{display:flex}
+.modal-box{background:var(--n0);border-radius:18px;padding:2rem;width:300px;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.18)}
+.modal-box h3{font-family:var(--font-serif);font-size:16px;font-weight:700;margin-bottom:3px}
+.modal-sub{font-size:12px;color:var(--n400);margin-bottom:1.25rem}
+.qr-frame{width:200px;height:200px;margin:0 auto 1rem;border:1px solid var(--n100);border-radius:10px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.qr-url{font-size:10px;color:var(--n400);word-break:break-all;background:var(--n50);padding:6px 8px;border-radius:6px;margin-bottom:1.25rem;line-height:1.5}
+.modal-btns{display:flex;gap:8px;justify-content:center}
+
+/* LOADING */
+.loading{text-align:center;padding:2rem;color:var(--n400);font-size:13px}
+
+@media(max-width:900px){.mgrid{grid-template-columns:repeat(2,1fr)}.two-col{grid-template-columns:1fr}.cgrid{grid-template-columns:repeat(2,1fr)}.sidebar{width:190px}}
+@media(max-width:600px){.shell{flex-direction:column}.sidebar{width:100%;flex-direction:row;min-height:auto}.sb-brand{display:none}.sb-nav{display:flex;padding:.5rem;overflow-x:auto}.nav-item{flex-direction:column;gap:3px;font-size:10px;padding:8px 10px;white-space:nowrap}.main{padding:1rem}.mgrid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+
+<!-- ADMIN -->
+<div class="shell" id="admin-shell">
+  <div class="sidebar">
+    <div class="sb-brand">
+      <div class="sb-icon">🚣</div>
+      <div class="sb-name">ศักดิ์สุภา ล่องแก่งหินเพิง</div>
+      <div class="sb-sub">062-5249698</div>
+    </div>
+    <nav class="sb-nav">
+      <div class="nav-item active" onclick="goTab(this,'dashboard')">📊 แดชบอร์ด</div>
+      <div class="nav-item" onclick="goTab(this,'hotels')">🏨 โรงแรมพาร์ทเนอร์</div>
+      <div class="nav-item" onclick="goTab(this,'commission')">💰 คอมมิชชั่น</div>
+      <div class="nav-item" onclick="goTab(this,'bookings')">📋 รายการจอง</div>
+      <div class="nav-item" style="margin-top:1rem;border:1px dashed rgba(255,255,255,.2)" onclick="previewCust()">👁️ ดูหน้าลูกค้า</div>
+    </nav>
+  </div>
+  <div class="main">
+
+    <!-- DASHBOARD -->
+    <div id="screen-dashboard" class="screen active">
+      <p class="pg-title">ภาพรวม</p>
+      <p class="pg-sub" id="dash-month">กำลังโหลด...</p>
+      <div class="mgrid">
+        <div class="mcard"><div class="mico ico-g">🎫</div><div class="mlbl">จองเดือนนี้</div><div class="mval" id="m-bk">—</div><div class="mnote" id="m-bk-note">กำลังโหลด</div></div>
+        <div class="mcard"><div class="mico ico-t">฿</div><div class="mlbl">รายได้รวม</div><div class="mval" id="m-rev">—</div><div class="mnote" id="m-rev-note">—</div></div>
+        <div class="mcard"><div class="mico ico-a">💸</div><div class="mlbl">ค่าคอมรวม</div><div class="mval" id="m-comm">—</div><div class="mnote">฿500 × ลำ</div></div>
+        <div class="mcard"><div class="mico ico-b">🏨</div><div class="mlbl">โรงแรมพาร์ทเนอร์</div><div class="mval" id="m-ht">—</div><div class="mnote">ที่ใช้งานอยู่</div></div>
+      </div>
+      <div class="two-col">
+        <div class="card"><div class="card-title">ยอดจองรายสัปดาห์</div><div class="bwrap" id="wchart"></div><div class="blabels" id="wlabels"></div></div>
+        <div class="card"><div class="card-title">ยอดจองตามโรงแรม</div><div id="src-bars"></div></div>
+      </div>
+      <div class="card"><div class="card-title">การจองล่าสุด</div><div id="recent-list"><div class="loading">⏳ กำลังโหลด...</div></div></div>
+    </div>
+
+    <!-- HOTELS -->
+    <div id="screen-hotels" class="screen">
+      <p class="pg-title">โรงแรมพาร์ทเนอร์</p>
+      <p class="pg-sub">เพิ่มโรงแรม สร้าง QR Code สำหรับวางแต่ละแห่ง</p>
+      <div class="fsec">
+        <h3>➕ เพิ่มโรงแรมใหม่</h3>
+        <div class="frow">
+          <div class="fgrp"><label>ชื่อโรงแรม</label><input type="text" id="new-name" placeholder="เช่น River View Hotel"></div>
+          <div class="fgrp" style="max-width:100px;display:flex;align-items:flex-end"><button class="btn-primary" onclick="addHotel()">➕ เพิ่ม</button></div>
+        </div>
+      </div>
+      <div class="card" style="padding:.5rem 0">
+        <table class="htable">
+          <thead><tr><th>โรงแรม</th><th>ยอดจอง</th><th>รายได้</th><th>คอม/ลำ</th><th>ค้างจ่าย</th><th></th></tr></thead>
+          <tbody id="htbody"><tr><td colspan="6" class="loading">⏳ กำลังโหลด...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- COMMISSION -->
+    <div id="screen-commission" class="screen">
+      <p class="pg-title">สรุปคอมมิชชั่น</p>
+      <p class="pg-sub">ยอดค่าคอมที่ต้องจ่ายแต่ละโรงแรม (฿500/ลำ)</p>
+      <div class="mgrid" style="grid-template-columns:repeat(3,1fr)">
+        <div class="mcard"><div class="mico ico-a">⏳</div><div class="mlbl">รอจ่าย</div><div class="mval" id="c-pending">—</div><div class="mnote" id="c-pending-note">—</div></div>
+        <div class="mcard"><div class="mico ico-g">✅</div><div class="mlbl">จ่ายแล้วเดือนนี้</div><div class="mval">฿0</div><div class="mnote">—</div></div>
+        <div class="mcard"><div class="mico ico-b">📅</div><div class="mlbl">รอบจ่ายถัดไป</div><div class="mval" style="font-size:16px">1 มิ.ย. 68</div><div class="mnote">—</div></div>
+      </div>
+      <div class="card"><div class="card-title">แยกตามโรงแรม</div><div class="cgrid" id="comm-grid"><div class="loading">⏳ กำลังโหลด...</div></div></div>
+      <div class="card"><div class="card-title">ประวัติการจ่ายคอมมิชชั่น</div><div id="comm-hist"><div class="loading">⏳ กำลังโหลด...</div></div></div>
+    </div>
+
+    <!-- BOOKINGS -->
+    <div id="screen-bookings" class="screen">
+      <p class="pg-title">รายการจองทั้งหมด</p>
+      <p class="pg-sub">ข้อมูลดึงจาก Supabase แบบ real-time</p>
+      <div class="card"><div id="all-bookings"><div class="loading">⏳ กำลังโหลด...</div></div></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- CUSTOMER PAGE -->
+<div class="cust-page" id="cust-page">
+  <div class="cust-header">
+    <h1>จองเรือล่องแก่ง</h1>
+    <p>ศักดิ์สุภา ล่องแก่งหินเพิง</p>
+    <div class="src-badge">🏨 <span id="src-name">โรงแรม</span></div>
+  </div>
+  <div class="steps">
+    <div class="step active" id="si-1"><div class="step-num">1</div> ข้อมูลการจอง</div>
+    <div class="step-sep" id="sep-12"></div>
+    <div class="step" id="si-2"><div class="step-num">2</div> ชำระเงิน</div>
+    <div class="step-sep" id="sep-23"></div>
+    <div class="step" id="si-3"><div class="step-num">3</div> ยืนยัน</div>
+  </div>
+  <div class="cust-body">
+
+    <!-- STEP 1 -->
+    <div class="panel active" id="p1">
+      <div class="bk-card">
+        <h2>ข้อมูลผู้จอง</h2>
+        <div class="bfield"><label>ชื่อ-นามสกุล *</label><input type="text" id="b-name" placeholder="สมชาย ใจดี"></div>
+        <div class="bfield"><label>เบอร์โทรศัพท์ *</label><input type="tel" id="b-phone" placeholder="08X-XXX-XXXX"></div>
+      </div>
+      <div class="bk-card">
+        <h2>เลือกวันเดินทาง</h2>
+        <div class="brow2">
+          <div class="bfield"><label>วันที่ *</label><input type="date" id="b-date"></div>
+          <div class="bfield"><label>เวลาออกเดินทาง</label><input type="time" id="b-time" min="08:00" max="15:30" value="08:00" style="width:100%;padding:10px 13px;font-size:14px;border:1.5px solid var(--n200);border-radius:8px;background:#fff;color:#2C2C2A;font-family:'Sarabun',sans-serif;outline:none;"></div>
+        </div>
+        <div class="bfield">
+          <label>จำนวนผู้เดินทาง</label>
+          <div class="counter">
+            <button class="c-btn" onclick="chgPpl(-1)">−</button>
+            <span class="c-num" id="ppl-n">2</span>
+            <button class="c-btn" onclick="chgPpl(1)">+</button>
+            <span class="c-note">คน</span>
+          </div>
+        </div>
+      </div>
+      <div class="price-box">
+        <div class="prow"><span>ราคาต่อลำ</span><span>฿3,500</span></div>
+        <div class="prow"><span>จำนวนลำ</span><span id="boat-cnt">× 1 ลำ</span></div>
+        <div class="prow ptotal"><span>รวมทั้งหมด</span><span id="price-total">฿3,500</span></div>
+        <div class="pcap" id="cap-note">บรรจุสูงสุด 6 คน/ลำ</div>
+      </div>
+      <button class="btn-next" onclick="goStep2()">ถัดไป: ชำระเงิน →</button>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="panel" id="p2">
+      <div class="bank-card">
+        <h2>โอนเงินมาที่บัญชีนี้</h2>
+        <div class="bank-info">
+          <div class="bank-logo">🔷</div>
+          <div>
+            <div class="bank-nm">กรุงไทย (KTB)</div>
+            <div class="bank-num">017-055487-2</div>
+            <div class="bank-acname">ศักดิ์สุภา ล่องแก่งหินเพิง</div>
+          </div>
+        </div>
+        <div class="amt-due"><span>ยอดที่ต้องโอน</span><strong id="due-amt">฿3,500</strong></div>
+      </div>
+      <div class="bk-card">
+        <h2>อัปโหลดสลิปโอนเงิน</h2>
+        <div class="upload-zone" id="upload-zone">
+          <input type="file" id="slip-input" accept="image/*" onchange="handleSlip(event)" onclick="event.stopPropagation()">
+          <div id="upload-ph"><div class="upload-icon">📎</div><p>แตะเพื่อเลือกรูปสลิป</p><small>JPG, PNG · ไม่เกิน 5MB</small></div>
+        </div>
+        <div class="slip-preview" id="slip-preview"><img id="slip-img" src="" alt="สลิป"><button class="slip-remove" onclick="removeSlip()">✕</button></div>
+      </div>
+      <button class="btn-book" id="btn-submit" onclick="submitBooking()" disabled>✅ ยืนยันการจองและส่งสลิป</button>
+      <button class="btn-outline" style="width:100%;margin-top:8px;text-align:center" onclick="goStep1()">← ย้อนกลับ</button>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="panel" id="p3">
+      <div class="success-wrap">
+        <div id="booking-receipt">
+          <div style="background:var(--g800);border-radius:16px;padding:1.5rem;margin-bottom:1rem;color:#fff;text-align:center;">
+            <div style="font-size:40px;margin-bottom:8px;">🚣</div>
+            <div style="font-family:var(--font-serif);font-size:18px;font-weight:700;">ศักดิ์สุภา ล่องแก่งหินเพิง</div>
+            <div style="font-size:12px;color:var(--g100);margin-top:4px;">062-5249698</div>
+            <div style="margin-top:12px;background:rgba(255,255,255,.15);border-radius:8px;padding:8px 12px;display:inline-block;">
+              <div style="font-size:11px;color:var(--g100);">เลขที่ใบจอง</div>
+              <div style="font-size:20px;font-weight:700;letter-spacing:.05em;" id="ref-no">—</div>
+            </div>
+          </div>
+          <div style="background:var(--n0);border-radius:16px;border:1px solid var(--n100);padding:1.25rem;text-align:left;margin-bottom:1rem;">
+            <div style="font-size:11px;font-weight:600;color:var(--n400);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px;">รายละเอียดการจอง</div>
+            <div id="ref-detail" style="font-size:14px;color:var(--n800);line-height:2.2;"></div>
+          </div>
+          <div style="background:var(--a50);border:1px solid var(--a300);border-radius:10px;padding:10px 14px;font-size:12px;color:var(--a800);margin-bottom:1rem;">
+            ⚠️ กรุณาบันทึกใบจองนี้ไว้เป็นหลักฐาน
+          </div>
+          <div class="sheet-note" id="sheet-note">📊 บันทึกข้อมูลสำเร็จ</div>
+        </div>
+        <button class="btn-primary" style="margin-top:1rem;width:100%;justify-content:center;background:var(--n800)" onclick="saveReceipt()">
+          📸 บันทึกใบจองเป็นรูป
+        </button>
+        <button class="btn-primary" style="margin-top:.5rem;width:100%;justify-content:center" onclick="resetBooking()">
+          🔄 จองใหม่
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- QR MODAL -->
+<div class="modal-bg" id="qr-modal">
+  <div class="modal-box">
+    <h3 id="qr-hname">QR Code</h3>
+    <p class="modal-sub">วาง QR นี้ที่ Lobby หรือห้องพัก</p>
+    <div class="qr-frame" id="qr-frame"></div>
+    <div class="qr-url" id="qr-url"></div>
+    <div class="modal-btns">
+      <button class="btn-outline" onclick="closeQR()">ปิด</button>
+      <button class="btn-primary" onclick="dlQR()">⬇️ ดาวน์โหลด</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── SUPABASE CONFIG ── */
+const SB_URL = 'https://zdzcprvzzzlwjaprwlhq.supabase.co';
+const SB_KEY = 'sb_publishable_Rg66Hht2N1vYM856jqEvMA_8P_FiJA9';
+const PRICE = 3500, COMM = 500, CAP = 6;
+const BASE_URL = 'https://resortsaksupha.github.io/saksupharafting';
+
+/* ── SUPABASE HELPERS ── */
+async function sbGet(table, query='') {
+  const r = await fetch(`${SB_URL}/rest/v1/${table}${query}`, {
+    headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
+  });
+  return r.json();
+}
+
+async function sbInsert(table, data) {
+  const r = await fetch(`${SB_URL}/rest/v1/${table}`, {
+    method: 'POST',
+    headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+    body: JSON.stringify(data)
+  });
+  return r.ok;
+}
+
+async function sbDelete(table, id) {
+  const r = await fetch(`${SB_URL}/rest/v1/${table}?id=eq.${id}`, {
+    method: 'DELETE',
+    headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
+  });
+  return r.ok;
+}
+
+/* ── UTILS ── */
+const fmt = n => '฿' + n.toLocaleString();
+const boats = p => Math.max(1, Math.ceil(p / CAP));
+const ini = n => { const p = n.trim().split(' '); return p.length >= 2 ? (p[0][0]+p[1][0]).toUpperCase() : n.slice(0,2).toUpperCase(); };
+
+let ppl = 2, curSrc = '', curSrcName = '', slipData = null;
+
+/* ── ADMIN NAV ── */
+function goTab(el, id) {
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('screen-' + id).classList.add('active');
+  if (id === 'dashboard') loadDash();
+  if (id === 'hotels') loadHotels();
+  if (id === 'commission') loadCommission();
+  if (id === 'bookings') loadAllBookings();
+}
+
+/* ── DASHBOARD ── */
+async function loadDash() {
+  const now = new Date();
+  document.getElementById('dash-month').textContent = `ยอดจองและรายได้เดือน ${now.toLocaleString('th-TH',{month:'long',year:'numeric'})}`;
+  
+  const [bookings, hotels] = await Promise.all([
+    sbGet('bookings', '?select=*&order=created_at.desc'),
+    sbGet('hotels', '?select=*')
+  ]);
+
+  const tot = bookings.length;
+  const totalRev = tot * PRICE;
+  document.getElementById('m-bk').textContent = tot;
+  document.getElementById('m-bk-note').textContent = tot > 0 ? `การจองทั้งหมด` : 'ยังไม่มีการจอง';
+  document.getElementById('m-rev').textContent = fmt(totalRev);
+  document.getElementById('m-rev-note').textContent = `${tot} × ฿3,500`;
+  document.getElementById('m-comm').textContent = fmt(tot * COMM);
+  document.getElementById('m-ht').textContent = hotels.length;
+
+  // กราฟรายสัปดาห์
+  const wkCounts = [0,0,0,0];
+  bookings.forEach(b => {
+    const diff = Math.floor((now - new Date(b.created_at)) / (7*24*60*60*1000));
+    if (diff >= 0 && diff < 4) wkCounts[3-diff]++;
+  });
+  const mx = Math.max(...wkCounts, 1);
+  document.getElementById('wchart').innerHTML = wkCounts.map((v,i) => `<div class="bcol"><div class="bnum">${v}</div><div class="bbar${i===3?' hi':''}" style="height:${Math.round(v/mx*85)}px"></div></div>`).join('');
+  document.getElementById('wlabels').innerHTML = ['สป.1','สป.2','สป.3','สป.4'].map(w => `<span>${w}</span>`).join('');
+
+  // ยอดตามโรงแรม
+  const hMap = {};
+  bookings.forEach(b => { hMap[b.hotel_name||'ไม่ระบุ'] = (hMap[b.hotel_name||'ไม่ระบุ']||0) + 1; });
+  const hArr = Object.entries(hMap).sort((a,b) => b[1]-a[1]);
+  const hmx = Math.max(...hArr.map(e=>e[1]), 1);
+  document.getElementById('src-bars').innerHTML = hArr.length
+    ? hArr.map(([n,c]) => `<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><div style="font-size:12px;color:var(--n600);width:130px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${n}</div><div style="flex:1;background:var(--n100);border-radius:4px;height:8px"><div style="width:${Math.round(c/hmx*100)}%;height:100%;background:var(--g400);border-radius:4px"></div></div><div style="font-size:12px;font-weight:600;width:20px;text-align:right">${c}</div></div>`).join('')
+    : '<div style="font-size:13px;color:var(--n400)">ยังไม่มีการจอง</div>';
+
+  // รายการล่าสุด
+  document.getElementById('recent-list').innerHTML = bookings.slice(0,5).length
+    ? bookings.slice(0,5).map(b => `
+      <div class="brow">
+        <div class="avi">${ini(b.name||'?')}</div>
+        <div style="flex:1"><div class="bname">${b.name||'-'}</div><div class="bdetail">${b.date||''} · ${b.time||''} · ${b.people||0}คน · ${b.boats||0}ลำ</div></div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px">
+          <span class="src-pill">${b.hotel_name||'-'}</span>
+          <span class="${b.slip_image?'slip-ok':'slip-wait'}">${b.slip_image?'✓ มีสลิป':'⏳ รอสลิป'}</span>
+        </div>
+        <div style="text-align:right;margin-left:10px"><div class="bamt">${fmt(b.boats*PRICE)}</div><div class="bcomm">คอม ${fmt(COMM)}</div></div>
+      </div>`).join('')
+    : '<div style="font-size:13px;color:var(--n400);padding:1rem 0">ยังไม่มีการจอง</div>';
+}
+
+/* ── HOTELS ── */
+async function loadHotels() {
+  const hotels = await sbGet('hotels', '?select=*&order=created_at.asc');
+  const bookings = await sbGet('bookings', '?select=hotel_id');
+  const bMap = {};
+  bookings.forEach(b => { bMap[b.hotel_id] = (bMap[b.hotel_id]||0) + 1; });
+
+  document.getElementById('htbody').innerHTML = hotels.length
+    ? hotels.map(h => {
+        const bk = bMap[h.id]||0;
+        return `<tr>
+          <td><strong>${h.name}</strong></td>
+          <td>${bk} ลำ</td>
+          <td>${fmt(bk*PRICE)}</td>
+          <td><span class="cpill">${fmt(COMM)}/ลำ</span></td>
+          <td style="font-weight:600;color:var(--a400)">${fmt(bk*COMM)}</td>
+          <td>
+            <button class="btn-qr" onclick="showQR('${h.id}','${h.name}')">🔲 QR</button>
+            <button class="btn-del" onclick="delHotel('${h.id}')">🗑️</button>
+          </td>
+        </tr>`;
+      }).join('')
+    : '<tr><td colspan="6" style="text-align:center;padding:1.5rem;color:var(--n400)">ยังไม่มีโรงแรม เพิ่มโรงแรมด้านบน</td></tr>';
+}
+
+async function addHotel() {
+  const nm = document.getElementById('new-name').value.trim();
+  if (!nm) { alert('กรุณากรอกชื่อโรงแรม'); return; }
+  const id = 'h' + Date.now();
+  const ok = await sbInsert('hotels', { id, name: nm, commission: COMM });
+  if (ok) {
+    document.getElementById('new-name').value = '';
+    loadHotels();
+    document.getElementById('m-ht').textContent = '...';
+  } else alert('เพิ่มโรงแรมไม่สำเร็จ กรุณาลองใหม่');
+}
+
+async function delHotel(id) {
+  if (!confirm('ลบโรงแรมนี้?')) return;
+  await sbDelete('hotels', id);
+  loadHotels();
+}
+
+/* ── COMMISSION ── */
+async function loadCommission() {
+  const [hotels, bookings, payments] = await Promise.all([
+    sbGet('hotels', '?select=*'),
+    sbGet('bookings', '?select=hotel_id,boats'),
+    sbGet('commission_payments', '?select=*&order=paid_at.desc')
+  ]);
+
+  const earnMap = {};
+  bookings.forEach(b => { earnMap[b.hotel_id] = (earnMap[b.hotel_id]||0) + (b.boats||1)*COMM; });
+
+  const paidMap = {};
+  payments.forEach(p => { paidMap[p.hotel_id] = (paidMap[p.hotel_id]||0) + p.amount; });
+
+  const totalOwed = Object.values(earnMap).reduce((a,b)=>a+b,0);
+  const totalPaid = Object.values(paidMap).reduce((a,b)=>a+b,0);
+  const totalBalance = totalOwed - totalPaid;
+
+  document.getElementById('c-pending').textContent = fmt(Math.max(0, totalBalance));
+  document.getElementById('c-pending-note').textContent = `สะสม ${fmt(totalOwed)} · จ่ายแล้ว ${fmt(totalPaid)}`;
+
+  document.getElementById('comm-grid').innerHTML = hotels.length
+    ? hotels.map(h => {
+        const earned = earnMap[h.id]||0;
+        const paid = paidMap[h.id]||0;
+        const balance = earned - paid;
+        return `<div class="ccard" style="border:1px solid var(--n100)">
+          <div class="cname">${h.name}</div>
+          <div class="csub">สะสม ${fmt(earned)}</div>
+          <div class="csub">จ่ายแล้ว <span style="color:var(--g400)">${fmt(paid)}</span></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:6px">
+            <div>
+              <div style="font-size:10px;color:var(--n400)">คงเหลือ</div>
+              <div class="cowed" style="color:${balance>0?'var(--a400)':'var(--g400)'}">${fmt(Math.max(0,balance))}</div>
+            </div>
+            ${balance > 0 ? `<button onclick="payComm('${h.id}','${h.name}',${balance})" style="font-size:11px;padding:5px 10px;background:var(--g400);color:#fff;border:none;border-radius:8px;cursor:pointer;font-family:var(--font-th)">💸 บันทึกจ่าย</button>` : `<span style="font-size:11px;color:var(--g400)">✅ ชำระครบ</span>`}
+          </div>
+        </div>`;
+      }).join('')
+    : '<div style="font-size:13px;color:var(--n400)">ยังไม่มีโรงแรม</div>';
+
+  // Payment history
+  const histEl = document.getElementById('comm-hist');
+  if (histEl) {
+    histEl.innerHTML = payments.length
+      ? payments.slice(0,10).map(p => `
+        <div class="brow">
+          <div style="flex:1">
+            <div class="bname">${p.hotel_name||'-'}</div>
+            <div class="bdetail">${new Date(p.paid_at).toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric'})}${p.note?' · '+p.note:''}</div>
+          </div>
+          <div class="bamt" style="color:var(--g400)">- ${fmt(p.amount)}</div>
+        </div>`).join('')
+      : '<div style="font-size:13px;color:var(--n400);padding:1rem 0">ยังไม่มีประวัติการจ่าย</div>';
+  }
+}
+
+async function payComm(hotelId, hotelName, balance) {
+  const amtStr = prompt(`บันทึกจ่ายคอมมิชชั่น
+${hotelName}
+ยอดคงเหลือ: ${fmt(balance)}
+
+ใส่จำนวนที่จ่าย:`, balance);
+  if (!amtStr) return;
+  const amt = parseInt(amtStr.replace(/[^0-9]/g,''));
+  if (!amt || amt <= 0) { alert('จำนวนไม่ถูกต้อง'); return; }
+  const note = prompt('หมายเหตุ (ไม่บังคับ):', '') || '';
+  const ok = await sbInsert('commission_payments', { hotel_id: hotelId, hotel_name: hotelName, amount: amt, note });
+  if (ok) { alert(`✅ บันทึกจ่าย ${fmt(amt)} ให้ ${hotelName} แล้ว`); loadCommission(); }
+  else alert('บันทึกไม่สำเร็จ กรุณาลองใหม่');
+}
+
+/* ── ALL BOOKINGS ── */
+async function loadAllBookings() {
+  const bookings = await sbGet('bookings', '?select=*&order=created_at.desc');
+  document.getElementById('all-bookings').innerHTML = bookings.length
+    ? bookings.map((b,i) => `
+      <div class="brow" style="flex-wrap:wrap;">
+        <div class="avi">${ini(b.name||'?')}</div>
+        <div style="flex:1;min-width:160px">
+          <div class="bname">${b.name||'-'} · ${b.phone||''}</div>
+          <div class="bdetail">${b.ref_no} · ${b.date||''} ${b.time||''} · ${b.people||0}คน · ${b.boats||0}ลำ</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px">
+          <span class="src-pill">${b.hotel_name||'-'}</span>
+          ${b.slip_image
+            ? `<button onclick="viewSlip('slip-${i}')" style="font-size:10px;padding:2px 8px;border-radius:20px;background:#E8F5E9;color:#2E7D32;border:none;cursor:pointer;">📎 ดูสลิป</button>`
+            : `<span class="slip-wait">⏳ รอสลิป</span>`}
+          <button onclick="delBooking('${b.id}')" style="font-size:10px;padding:2px 8px;border-radius:20px;background:var(--r50);color:var(--r400);border:none;cursor:pointer;margin-top:2px;">🗑️ ลบ</button>
+        </div>
+        <div style="text-align:right;margin-left:10px">
+          <div class="bamt">${b.amount||fmt(b.boats*PRICE)}</div>
+        </div>
+        ${b.slip_image ? `<div id="slip-${i}" style="display:none;width:100%;margin-top:10px;"><img src="${b.slip_image}" style="max-width:300px;border-radius:10px;border:1px solid var(--n200)"></div>` : ''}
+      </div>`).join('')
+    : '<div style="font-size:13px;color:var(--n400);padding:1rem 0">ยังไม่มีการจอง</div>';
+}
+
+/* ── CUSTOMER ── */
+function previewCust() {
+  document.getElementById('admin-shell').style.display = 'none';
+  document.getElementById('cust-page').classList.add('show');
+  goStep1();
+}
+
+function setStep(n) {
+  [1,2,3].forEach(i => {
+    const si = document.getElementById('si-'+i);
+    const p = document.getElementById('p'+i);
+    si.classList.remove('active','done');
+    p.classList.remove('active');
+    if (i < n) si.classList.add('done');
+    if (i === n) { si.classList.add('active'); p.classList.add('active'); }
+  });
+  document.getElementById('sep-12').classList.toggle('done', n > 1);
+  document.getElementById('sep-23').classList.toggle('done', n > 2);
+}
+
+function goStep1() { setStep(1); }
+function goStep2() {
+  const name = document.getElementById('b-name').value.trim();
+  const phone = document.getElementById('b-phone').value.trim();
+  const date = document.getElementById('b-date').value;
+  const time = document.getElementById('b-time').value;
+  if (!name||!phone||!date) { alert('กรุณากรอกข้อมูลให้ครบ'); return; }
+  if (time) {
+    const [h,m] = time.split(':').map(Number);
+    const mins = h*60+m;
+    if (mins < 8*60 || mins > 15*60+30) {
+      alert('กรุณาเลือกเวลาระหว่าง 08:00 - 15:30 น. เท่านั้น');
+      return;
+    }
+  }
+  document.getElementById('due-amt').textContent = fmt(boats(ppl)*PRICE);
+  setStep(2);
+}
+
+function chgPpl(d) {
+  ppl = Math.max(1, Math.min(30, ppl+d));
+  document.getElementById('ppl-n').textContent = ppl;
+  const b = boats(ppl);
+  document.getElementById('boat-cnt').textContent = `× ${b} ลำ`;
+  document.getElementById('price-total').textContent = fmt(b*PRICE);
+  document.getElementById('cap-note').textContent = b === 1 ? `บรรจุสูงสุด ${CAP} คน/ลำ` : `${ppl} คน → ${b} ลำ (สูงสุด ${CAP} คน/ลำ)`;
+}
+
+function handleSlip(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  if (file.size > 5*1024*1024) { alert('ไฟล์ใหญ่เกิน 5MB'); return; }
+  const reader = new FileReader();
+  reader.onload = ev => {
+    slipData = ev.target.result;
+    document.getElementById('slip-preview').style.display = 'block';
+    document.getElementById('upload-ph').style.display = 'none';
+    document.getElementById('slip-img').src = slipData;
+    document.getElementById('btn-submit').disabled = false;
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeSlip() {
+  slipData = null;
+  document.getElementById('slip-preview').style.display = 'none';
+  document.getElementById('upload-ph').style.display = 'block';
+  document.getElementById('slip-input').value = '';
+  document.getElementById('btn-submit').disabled = true;
+}
+
+async function submitBooking() {
+  const name = document.getElementById('b-name').value.trim();
+  const phone = document.getElementById('b-phone').value.trim();
+  const date = document.getElementById('b-date').value;
+  const time = document.getElementById('b-time').value;
+  const b = boats(ppl);
+  const total = b * PRICE;
+  const refNo = 'RR-' + new Date().getFullYear() + '-' + String(Math.floor(Math.random()*9000)+1000);
+
+  document.getElementById('btn-submit').disabled = true;
+  document.getElementById('btn-submit').textContent = '⏳ กำลังบันทึก...';
+
+  const ok = await sbInsert('bookings', {
+    ref_no: refNo, hotel_id: curSrc, hotel_name: curSrcName,
+    name, phone, date, time, people: ppl, boats: b,
+    amount: fmt(total), slip_image: slipData || null
+  });
+
+  document.getElementById('ref-no').textContent = refNo;
+  document.getElementById('ref-detail').innerHTML = [
+    ['👤 ชื่อ', name],
+    ['📞 โทร', phone],
+    ['📅 วันที่', `${date} · ${time}`],
+    ['👥 จำนวน', `${ppl} คน · ${b} ลำ`],
+    ['💰 ยอดรวม', fmt(total)],
+    ['🏨 โรงแรม', curSrcName],
+  ].map(([k,v]) => `<div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--n100);padding:4px 0"><span style="color:var(--n400)">${k}</span><span style="font-weight:500">${v}</span></div>`).join('');
+  document.getElementById('sheet-note').textContent = ok ? '📊 บันทึกข้อมูลสำเร็จ' : '⚠️ บันทึกไม่สำเร็จ กรุณาโทรแจ้งเรา';
+  setStep(3);
+}
+
+function resetBooking() {
+  slipData = null; ppl = 2;
+  document.getElementById('b-name').value = '';
+  document.getElementById('b-phone').value = '';
+  document.getElementById('b-date').value = new Date().toISOString().split('T')[0];
+  document.getElementById('ppl-n').textContent = 2;
+  document.getElementById('boat-cnt').textContent = '× 1 ลำ';
+  document.getElementById('price-total').textContent = '฿3,500';
+  document.getElementById('cap-note').textContent = `บรรจุสูงสุด ${CAP} คน/ลำ`;
+  document.getElementById('btn-submit').disabled = true;
+  document.getElementById('btn-submit').textContent = '✅ ยืนยันการจองและส่งสลิป';
+  removeSlip();
+  setStep(1);
+}
+
+/* ── QR ── */
+function showQR(id, name) {
+  curSrc = id; curSrcName = name;
+  document.getElementById('qr-hname').textContent = name;
+  const url = `${BASE_URL}?source=${id}`;
+  document.getElementById('qr-url').textContent = url;
+  const frame = document.getElementById('qr-frame'); frame.innerHTML = '';
+  new QRCode(frame, { text: url, width: 180, height: 180, colorDark: '#085041', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M });
+  document.getElementById('qr-modal').classList.add('open');
+}
+function closeQR() { document.getElementById('qr-modal').classList.remove('open'); }
+function dlQR() {
+  setTimeout(() => {
+    const img = document.querySelector('#qr-frame img'); if (!img) return;
+    const a = document.createElement('a'); a.href = img.src;
+    a.download = `QR-${document.getElementById('qr-hname').textContent}.png`; a.click();
+  }, 100);
+}
+
+/* ── URL SOURCE CHECK ── */
+function checkSrc() {
+  const p = new URLSearchParams(window.location.search);
+  const src = p.get('source');
+  if (src) {
+    curSrc = src;
+    sbGet('hotels', `?id=eq.${src}&select=name`).then(r => {
+      curSrcName = r[0]?.name || src;
+      document.getElementById('src-name').textContent = curSrcName;
+    });
+    document.getElementById('admin-shell').style.display = 'none';
+    document.getElementById('cust-page').classList.add('show');
+  }
+}
+
+/* ── VIEW SLIP ── */
+function viewSlip(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+/* ── DELETE BOOKING ── */
+async function delBooking(id) {
+  if (!confirm('ลบรายการจองนี้?\nไม่สามารถกู้คืนได้')) return;
+  const ok = await sbDelete('bookings', id);
+  if (ok) loadAllBookings();
+  else alert('ลบไม่สำเร็จ กรุณาลองใหม่');
+}
+
+/* ── SAVE RECEIPT ── */
+async function saveReceipt() {
+  const el = document.getElementById('booking-receipt');
+  try {
+    const canvas = await html2canvas(el, { scale: 2, backgroundColor: '#F7F6F3', useCORS: true });
+    const a = document.createElement('a');
+    a.href = canvas.toDataURL('image/png');
+    a.download = `ใบจอง-${document.getElementById('ref-no').textContent}.png`;
+    a.click();
+  } catch(e) {
+    alert('บันทึกรูปไม่สำเร็จ กรุณา Screenshot หน้าจอแทนครับ');
+  }
+}
+
+/* ── INIT ── */
+document.getElementById('b-date').value = new Date().toISOString().split('T')[0];
+loadDash();
+checkSrc();
+</script>
+</body>
+</html>

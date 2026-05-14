@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>จองเรือล่องแก่ง</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600&family=Noto+Serif+Thai:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* ─── RESET ─── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+/* ─── TOKENS ─── */
+:root {
+  --g50:#E1F5EE; --g100:#9FE1CB; --g200:#5DCAA5;
+  --g400:#1D9E75; --g600:#0F6E56; --g800:#085041;
+  --a50:#FFF8EC;  --a200:#FAC775; --a400:#BA7517; --a800:#633806;
+  --n0:#fff; --n50:#F7F6F3; --n100:#EEECE7; --n200:#D4D2CA;
+  --n400:#9B9991; --n600:#5F5E5A; --n800:#2C2C2A;
+  --r400:#E53935; --r50:#FFEBEE;
+  --radius:14px; --radius-sm:8px;
+  --shadow:0 2px 16px rgba(0,0,0,0.08);
+  --transition:0.18s ease;
+}
+
+body {
+  font-family:'Sarabun',sans-serif;
+  background:var(--n50);
+  color:var(--n800);
+  min-height:100vh;
+}
+
+/* ─── LAYOUT SHELL ─── */
+.app-shell { display:flex; min-height:100vh; }
+
+/* ─── SIDEBAR (admin only) ─── */
+.sidebar {
+  width:230px; flex-shrink:0;
+  background:var(--n800);
+  display:flex; flex-direction:column;
+}
+.sidebar-brand {
+  padding:1.5rem 1.25rem 1.1rem;
+  border-bottom:1px solid rgba(255,255,255,0.07);
+}
+.brand-icon {
+  width:38px; height:38px; border-radius:10px;
+  background:var(--g400);
+  display:flex; align-items:center; justify-content:center;
+  font-size:20px; margin-bottom:10px;
+}
+.brand-name { font-family:'Noto Serif Thai',serif; font-size:15px; font-weight:700; color:#fff; }
+.brand-sub  { font-size:11px; color:var(--n400); margin-top:2px; }
+.sidebar-nav { padding:1rem 0.75rem; flex:1; }
+.nav-item {
+  display:flex; align-items:center; gap:10px;
+  padding:9px 12px; border-radius:10px; cursor:pointer;
+  font-size:13px; color:var(--n400);
+  transition:all var(--transition); margin-bottom:2px;
+}
+.nav-item:hover  { background:rgba(255,255,255,0.06); color:#fff; }
+.nav-item.active { background:var(--g400); color:#fff; }
+.nav-icon { font-size:16px; width:18px; text-align:center; }
+
+/* ─── MAIN ─── */
+.main { flex:1; overflow-y:auto; padding:2rem; }
+
+/* ─── SCREENS ─── */
+.screen { display:none; }
+.screen.active { display:block; }
+.page-title { font-family:'Noto Serif Thai',serif; font-size:22px; font-weight:700; margin-bottom:4px; }
+.page-sub   { font-size:13px; color:var(--n400); margin-bottom:1.5rem; }
+
+/* ─── METRIC GRID ─── */
+.metric-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:1.5rem; }
+.metric-card {
+  background:var(--n0); border-radius:var(--radius); padding:1.1rem 1.25rem;
+  border:1px solid var(--n100);
+}
+.metric-ico {
+  width:34px; height:34px; border-radius:8px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:16px; margin-bottom:10px;
+}
+.ico-g  { background:var(--g50);  color:var(--g600); }
+.ico-a  { background:var(--a50);  color:var(--a400); }
+.ico-b  { background:#EBF5FF;     color:#1565C0; }
+.ico-t  { background:#E0F7FA;     color:#00838F; }
+.metric-lbl { font-size:11px; color:var(--n400); text-transform:uppercase; letter-spacing:.05em; margin-bottom:4px; }
+.metric-val { font-size:24px; font-weight:600; line-height:1; }
+.metric-note { font-size:11px; color:var(--n400); margin-top:5px; }
+.metric-note.up { color:var(--g400); }
+
+/* ─── CARD ─── */
+.card {
+  background:var(--n0); border-radius:var(--radius); border:1px solid var(--n100);
+  padding:1.25rem 1.5rem; margin-bottom:1.25rem;
+}
+.card-title { font-size:11px; font-weight:600; color:var(--n400); text-transform:uppercase; letter-spacing:.06em; margin-bottom:1rem; }
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:1.25rem; }
+
+/* ─── BAR CHART ─── */
+.bar-wrap { display:flex; align-items:flex-end; gap:8px; height:90px; }
+.bar-col  { display:flex; flex-direction:column; align-items:center; flex:1; gap:4px; }
+.bar { width:100%; border-radius:4px 4px 0 0; background:var(--g100); }
+.bar.hi { background:var(--g400); }
+.bar-lbl { font-size:10px; color:var(--n400); }
+.bar-n   { font-size:10px; font-weight:600; color:var(--n600); }
+.bar-labels { display:flex; gap:8px; margin-top:5px; }
+.bar-labels span { flex:1; text-align:center; font-size:10px; color:var(--n400); }
+
+/* ─── BOOKING LIST ─── */
+.brow { display:flex; align-items:center; gap:12px; padding:11px 0; border-bottom:1px solid var(--n100); }
+.brow:last-child { border-bottom:none; }
+.avi { width:36px; height:36px; border-radius:50%; background:var(--g50); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:600; color:var(--g600); flex-shrink:0; }
+.bname  { font-size:13px; font-weight:500; }
+.bdetail{ font-size:11px; color:var(--n400); margin-top:2px; }
+.src-pill { font-size:10px; padding:2px 8px; background:var(--g50); color:var(--g600); border-radius:20px; font-weight:500; white-space:nowrap; }
+.bamt  { font-size:13px; font-weight:600; white-space:nowrap; text-align:right; }
+.bcomm { font-size:10px; color:var(--a400); text-align:right; margin-top:2px; }
+
+/* slip status badge */
+.slip-badge { font-size:10px; padding:2px 8px; border-radius:20px; margin-top:3px; }
+.slip-ok  { background:#E8F5E9; color:#2E7D32; }
+.slip-wait { background:#FFF9C4; color:#F57F17; }
+
+/* ─── HOTEL TABLE ─── */
+.htable { width:100%; border-collapse:collapse; }
+.htable th { font-size:10px; text-transform:uppercase; letter-spacing:.05em; color:var(--n400); font-weight:500; text-align:left; padding:0 12px 10px; border-bottom:1px solid var(--n100); }
+.htable td { padding:11px 12px; font-size:13px; border-bottom:1px solid var(--n100); vertical-align:middle; }
+.htable tr:last-child td { border-bottom:none; }
+.htable tr:hover td { background:var(--n50); }
+.cpill { display:inline-block; font-size:11px; padding:2px 10px; background:var(--a50); color:var(--a400); border-radius:20px; font-weight:500; }
+.btn-qr { display:inline-flex; align-items:center; gap:5px; font-size:12px; padding:5px 12px; background:none; border:1px solid var(--n200); border-radius:var(--radius-sm); cursor:pointer; color:var(--n600); font-family:'Sarabun',sans-serif; transition:all var(--transition); }
+.btn-qr:hover { background:var(--n50); border-color:var(--n400); color:var(--n800); }
+
+/* ─── ADD HOTEL FORM ─── */
+.form-sec { background:var(--n50); border:1px dashed var(--n200); border-radius:var(--radius); padding:1.25rem 1.5rem; margin-bottom:1.25rem; }
+.form-sec h3 { font-size:13px; font-weight:600; color:var(--n600); margin-bottom:1rem; }
+.frow { display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end; }
+.fgrp { flex:1; min-width:140px; }
+.fgrp label { font-size:11px; color:var(--n400); display:block; margin-bottom:5px; text-transform:uppercase; letter-spacing:.04em; }
+.fgrp input,.fgrp select { width:100%; padding:8px 12px; font-size:13px; border:1px solid var(--n200); border-radius:var(--radius-sm); background:var(--n0); color:var(--n800); font-family:'Sarabun',sans-serif; outline:none; transition:border-color var(--transition); }
+.fgrp input:focus { border-color:var(--g400); }
+
+/* ─── COMMISSION ─── */
+.comm-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+.ccard { background:var(--n50); border:1px solid var(--n100); border-radius:var(--radius-sm); padding:.875rem 1rem; }
+.ccard .cname { font-size:12px; font-weight:500; margin-bottom:3px; }
+.ccard .csub  { font-size:11px; color:var(--n400); margin-bottom:6px; }
+.ccard .cowed { font-size:17px; font-weight:600; color:var(--a400); }
+
+/* ─── SETTINGS ─── */
+.setting-row { display:flex; align-items:flex-start; gap:1rem; padding:1.1rem 0; border-bottom:1px solid var(--n100); }
+.setting-row:last-child { border-bottom:none; }
+.setting-label { width:180px; flex-shrink:0; }
+.setting-label strong { font-size:13px; font-weight:500; display:block; margin-bottom:3px; }
+.setting-label span { font-size:11px; color:var(--n400); }
+.setting-input { flex:1; }
+.setting-input input,.setting-input select,.setting-input textarea {
+  width:100%; padding:8px 12px; font-size:13px;
+  border:1px solid var(--n200); border-radius:var(--radius-sm);
+  background:var(--n0); color:var(--n800); font-family:'Sarabun',sans-serif;
+  outline:none; transition:border-color var(--transition);
+}
+.setting-input input:focus,.setting-input textarea:focus { border-color:var(--g400); box-shadow:0 0 0 3px rgba(29,158,117,.1); }
+.setting-saved { display:none; font-size:12px; color:var(--g400); margin-top:5px; }
+
+/* ─── BUTTONS ─── */
+.btn-primary { background:var(--g400); color:#fff; border:none; padding:9px 20px; border-radius:var(--radius-sm); font-size:13px; font-weight:500; cursor:pointer; font-family:'Sarabun',sans-serif; display:inline-flex; align-items:center; gap:6px; transition:background var(--transition); }
+.btn-primary:hover { background:var(--g600); }
+.btn-outline { padding:8px 16px; border:1px solid var(--n200); background:none; border-radius:var(--radius-sm); font-size:13px; cursor:pointer; color:var(--n800); font-family:'Sarabun',sans-serif; transition:all var(--transition); }
+.btn-outline:hover { background:var(--n50); }
+
+/* ════════════════════════════════════════
+   CUSTOMER BOOKING PAGE (full screen)
+   ════════════════════════════════════════ */
+.booking-page {
+  display:none;
+  min-height:100vh;
+  background:var(--n50);
+  padding:0;
+}
+.booking-page.show { display:block; }
+
+.bk-header {
+  background:var(--g800);
+  padding:2rem 1.25rem 1.5rem;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+}
+.bk-header::before {
+  content:'';
+  position:absolute; inset:0;
+  background:radial-gradient(ellipse at 70% 30%, rgba(29,158,117,.3) 0%, transparent 60%);
+  pointer-events:none;
+}
+.bk-header h1 { font-family:'Noto Serif Thai',serif; font-size:22px; font-weight:700; color:#fff; position:relative; }
+.bk-header p  { font-size:13px; color:var(--g100); margin-top:4px; position:relative; }
+.bk-source-pill { display:inline-flex; align-items:center; gap:5px; margin-top:10px; background:rgba(255,255,255,.13); color:var(--g100); font-size:11px; padding:4px 12px; border-radius:20px; position:relative; }
+
+/* STEP INDICATOR */
+.steps { display:flex; align-items:center; justify-content:center; padding:1.25rem 1rem .75rem; gap:0; }
+.step { display:flex; align-items:center; gap:6px; font-size:12px; color:var(--n400); }
+.step-num { width:24px; height:24px; border-radius:50%; border:1.5px solid var(--n200); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:600; transition:all var(--transition); flex-shrink:0; }
+.step.done  .step-num { background:var(--g400); border-color:var(--g400); color:#fff; }
+.step.active .step-num { background:var(--n800); border-color:var(--n800); color:#fff; }
+.step.active { color:var(--n800); font-weight:500; }
+.step-sep { width:32px; height:1.5px; background:var(--n200); margin:0 4px; }
+.step-sep.done { background:var(--g400); }
+
+/* STEP PANELS */
+.step-panel { display:none; }
+.step-panel.active { display:block; }
+
+.bk-body { max-width:480px; margin:0 auto; padding:0 1rem 2rem; }
+
+/* form card */
+.bk-card {
+  background:var(--n0); border-radius:var(--radius); border:1px solid var(--n100);
+  padding:1.25rem; margin-bottom:.875rem;
+}
+.bk-card h2 { font-size:12px; font-weight:600; color:var(--n400); text-transform:uppercase; letter-spacing:.06em; margin-bottom:1rem; }
+.bfield { margin-bottom:13px; }
+.bfield:last-child { margin-bottom:0; }
+.bfield label { font-size:12px; color:var(--n600); display:block; margin-bottom:5px; }
+.bfield input,.bfield select {
+  width:100%; padding:10px 13px; font-size:14px;
+  border:1.5px solid var(--n200); border-radius:var(--radius-sm);
+  background:var(--n0); color:var(--n800); font-family:'Sarabun',sans-serif;
+  outline:none; transition:border-color var(--transition);
+}
+.bfield input:focus,.bfield select:focus { border-color:var(--g400); box-shadow:0 0 0 3px rgba(29,158,117,.12); }
+.brow2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+
+/* counter */
+.counter { display:flex; align-items:center; gap:10px; }
+.c-btn { width:36px; height:36px; border:1.5px solid var(--n200); background:var(--n0); border-radius:8px; font-size:20px; cursor:pointer; color:var(--n800); display:flex; align-items:center; justify-content:center; transition:all var(--transition); line-height:1; }
+.c-btn:hover { border-color:var(--g400); color:var(--g400); }
+.c-num { font-size:20px; font-weight:600; min-width:36px; text-align:center; }
+.c-note { font-size:12px; color:var(--n400); }
+
+/* price box */
+.price-box { background:var(--g800); border-radius:var(--radius); padding:1.1rem 1.25rem; margin-bottom:.875rem; color:#fff; }
+.prow { display:flex; justify-content:space-between; font-size:13px; padding:4px 0; color:var(--g100); }
+.prow.ptotal { font-size:17px; font-weight:600; color:#fff; border-top:1px solid rgba(255,255,255,.15); padding-top:10px; margin-top:5px; }
+.pcap-note { font-size:11px; color:var(--g200); margin-top:6px; }
+
+/* STEP 2 — PAYMENT */
+.bank-card {
+  background:var(--n0); border-radius:var(--radius); border:1.5px solid var(--g400);
+  padding:1.25rem; margin-bottom:.875rem;
+}
+.bank-card h2 { font-size:12px; font-weight:600; color:var(--n400); text-transform:uppercase; letter-spacing:.06em; margin-bottom:1rem; }
+.bank-info { display:flex; align-items:center; gap:14px; }
+.bank-logo { width:48px; height:48px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0; }
+.bank-logo.kbank { background:#1B5E20; color:#fff; }
+.bank-logo.scb   { background:#4A148C; color:#fff; }
+.bank-logo.bbl   { background:#0D47A1; color:#fff; }
+.bank-logo.ktb   { background:#1565C0; color:#fff; }
+.bank-num { font-family:monospace; font-size:20px; font-weight:600; letter-spacing:.08em; color:var(--n800); }
+.bank-name-txt { font-size:13px; color:var(--n400); margin-top:2px; }
+.bank-acname { font-size:14px; font-weight:500; color:var(--n800); margin-top:8px; border-top:1px solid var(--n100); padding-top:8px; }
+.amount-due { background:var(--a50); border:1px solid var(--a200); border-radius:var(--radius-sm); padding:10px 14px; margin-top:10px; display:flex; align-items:center; justify-content:space-between; }
+.amount-due span { font-size:13px; color:var(--a400); }
+.amount-due strong { font-size:18px; font-weight:600; color:var(--a800); }
+
+/* UPLOAD SLIP */
+.upload-zone {
+  border:2px dashed var(--n200); border-radius:var(--radius);
+  padding:2rem 1rem; text-align:center; cursor:pointer;
+  transition:all var(--transition); background:var(--n50);
+  position:relative;
+}
+.upload-zone:hover,.upload-zone.dragover { border-color:var(--g400); background:var(--g50); }
+.upload-icon { font-size:36px; margin-bottom:10px; color:var(--n400); }
+.upload-zone p { font-size:13px; color:var(--n600); }
+.upload-zone small { font-size:11px; color:var(--n400); margin-top:4px; display:block; }
+.upload-zone input[type=file] { position:absolute; inset:0; opacity:0; cursor:pointer; }
+.slip-preview { display:none; border-radius:var(--radius); overflow:hidden; border:1px solid var(--n200); position:relative; }
+.slip-preview img { width:100%; display:block; max-height:280px; object-fit:contain; background:var(--n100); }
+.slip-remove { position:absolute; top:8px; right:8px; background:rgba(0,0,0,.55); color:#fff; border:none; border-radius:50%; width:28px; height:28px; font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+
+/* STEP 3 — SUCCESS */
+.success-wrap { text-align:center; padding:2rem 1rem; }
+.success-circle { width:72px; height:72px; background:var(--g50); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 1.25rem; font-size:30px; color:var(--g400); }
+.success-wrap h2 { font-family:'Noto Serif Thai',serif; font-size:22px; font-weight:700; margin-bottom:6px; }
+.success-wrap p  { font-size:13px; color:var(--n400); }
+.ref-block { background:var(--g50); border-radius:var(--radius); padding:1rem 1.25rem; margin:1.1rem 0; text-align:left; }
+.ref-num   { font-size:20px; font-weight:700; color:var(--g800); margin-bottom:8px; }
+.ref-detail { font-size:13px; color:var(--g600); line-height:1.9; }
+.line-sent { background:#E8F5E9; border-radius:var(--radius-sm); padding:10px 14px; font-size:12px; color:#2E7D32; display:flex; align-items:center; gap:8px; margin-top:8px; }
+
+/* SUBMIT BTN */
+.btn-book { width:100%; background:var(--g400); color:#fff; border:none; padding:14px; border-radius:var(--radius); font-size:15px; font-weight:600; cursor:pointer; font-family:'Noto Serif Thai',serif; display:flex; align-items:center; justify-content:center; gap:8px; transition:background var(--transition); margin-top:.5rem; }
+.btn-book:hover { background:var(--g600); }
+.btn-book:disabled { background:var(--n200); cursor:not-allowed; color:var(--n400); }
+.btn-next { width:100%; background:var(--n800); color:#fff; border:none; padding:13px; border-radius:var(--radius); font-size:14px; font-weight:500; cursor:pointer; font-family:'Sarabun',sans-serif; display:flex; align-items:center; justify-content:center; gap:8px; transition:background var(--transition); margin-top:.5rem; }
+.btn-next:hover { background:var(--n600); }
+
+/* QR MODAL */
+.modal-backdrop { display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:200; align-items:center; justify-content:center; }
+.modal-backdrop.open { display:flex; }
+.modal-box { background:var(--n0); border-radius:18px; padding:2rem; width:300px; text-align:center; box-shadow:0 24px 60px rgba(0,0,0,.18); }
+.modal-box h3 { font-family:'Noto Serif Thai',serif; font-size:16px; font-weight:700; margin-bottom:3px; }
+.modal-sub { font-size:12px; color:var(--n400); margin-bottom:1.25rem; }
+.qr-frame { width:200px; height:200px; margin:0 auto 1rem; border:1px solid var(--n100); border-radius:10px; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+.qr-url-box { font-size:10px; color:var(--n400); word-break:break-all; background:var(--n50); padding:6px 8px; border-radius:6px; margin-bottom:1.25rem; line-height:1.5; }
+.modal-btns { display:flex; gap:8px; justify-content:center; }
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:900px) {
+  .metric-grid { grid-template-columns:repeat(2,1fr); }
+  .two-col { grid-template-columns:1fr; }
+  .comm-grid { grid-template-columns:repeat(2,1fr); }
+  .sidebar { width:190px; }
+}
+@media(max-width:600px) {
+  .app-shell { flex-direction:column; }
+  .sidebar { width:100%; flex-direction:row; min-height:auto; }
+  .sidebar-brand { display:none; }
+  .sidebar-nav { display:flex; padding:.5rem; overflow-x:auto; }
+  .nav-item { flex-direction:column; gap:3px; font-size:10px; padding:8px 10px; white-space:nowrap; }
+  .main { padding:1rem; }
+  .metric-grid { grid-template-columns:1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ════ ADMIN SHELL ════ -->
+<div class="app-shell" id="admin-shell">
+  <div class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon">🚣</div>
+      <div class="brand-name">ล่องแก่งสยาม</div>
+      <div class="brand-sub">ระบบจองเรือ</div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-item active" onclick="switchTab(this,'dashboard')"><span class="nav-icon">📊</span> แดชบอร์ด</div>
+      <div class="nav-item" onclick="switchTab(this,'hotels')"><span class="nav-icon">🏨</span> โรงแรมพาร์ทเนอร์</div>
+      <div class="nav-item" onclick="switchTab(this,'commission')"><span class="nav-icon">💰</span> คอมมิชชั่น</div>
+      <div class="nav-item" onclick="switchTab(this,'settings')"><span class="nav-icon">⚙️</span> ตั้งค่าระบบ</div>
+      <div class="nav-item" onclick="previewCustomer()" style="margin-top:1rem; border:1px dashed rgba(255,255,255,.2)"><span class="nav-icon">👁️</span> ดูหน้าลูกค้า</div>
+    </nav>
+  </div>
+  <div class="main">
+
+    <!-- DASHBOARD -->
+    <div id="screen-dashboard" class="screen active">
+      <p class="page-title">ภาพรวม</p>
+      <p class="page-sub">ยอดจองและรายได้เดือนพฤษภาคม 2568</p>
+      <div class="metric-grid">
+        <div class="metric-card"><div class="metric-ico ico-g">🎫</div><div class="metric-lbl">จองเดือนนี้</div><div class="metric-val" id="m-bk">0</div><div class="metric-note">-</div></div>
+        <div class="metric-card"><div class="metric-ico ico-t">฿</div><div class="metric-lbl">รายได้รวม</div><div class="metric-val" id="m-rev">฿0</div><div class="metric-note">0 × ฿3,500</div></div>
+        <div class="metric-card"><div class="metric-ico ico-a">💸</div><div class="metric-lbl">ค่าคอมรวม</div><div class="metric-val" id="m-comm">฿0</div><div class="metric-note">0 × ฿500/ลำ</div></div>
+        <div class="metric-card"><div class="metric-ico ico-b">🏨</div><div class="metric-lbl">โรงแรมพาร์ทเนอร์</div><div class="metric-val" id="m-ht">0</div><div class="metric-note">ที่ใช้งานอยู่</div></div>
+      </div>
+      <div class="two-col">
+        <div class="card">
+          <div class="card-title">ยอดจองรายสัปดาห์</div>
+          <div class="bar-wrap" id="wchart"></div>
+          <div class="bar-labels" id="wlabels"></div>
+        </div>
+        <div class="card">
+          <div class="card-title">ยอดจองตามโรงแรม</div>
+          <div id="source-bars"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">การจองล่าสุด</div>
+        <div id="recent-list"></div>
+      </div>
+    </div>
+
+    <!-- HOTELS -->
+    <div id="screen-hotels" class="screen">
+      <p class="page-title">โรงแรมพาร์ทเนอร์</p>
+      <p class="page-sub">จัดการรายชื่อโรงแรมและสร้าง QR Code สำหรับวางแต่ละแห่ง</p>
+      <div class="form-sec">
+        <h3>➕ เพิ่มโรงแรมใหม่</h3>
+        <div class="frow">
+          <div class="fgrp"><label>ชื่อโรงแรม</label><input type="text" id="new-name" placeholder="เช่น River View Hotel"></div>
+          <div class="fgrp" style="max-width:150px;"><label>คอมมิชชั่น / ลำ (฿)</label><input type="number" id="new-comm" value="500"></div>
+          <div class="fgrp" style="max-width:100px; display:flex; align-items:flex-end;"><button class="btn-primary" onclick="addHotel()">➕ เพิ่ม</button></div>
+        </div>
+      </div>
+      <div class="card" style="padding:.5rem 0;">
+        <table class="htable">
+          <thead><tr><th>โรงแรม</th><th>ยอดจอง</th><th>รายได้</th><th>คอม/ลำ</th><th>ค้างจ่าย</th><th>QR Code</th></tr></thead>
+          <tbody id="htbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- COMMISSION -->
+    <div id="screen-commission" class="screen">
+      <p class="page-title">สรุปคอมมิชชั่น</p>
+      <p class="page-sub">ยอดค่าคอมที่ต้องจ่ายให้แต่ละโรงแรม (฿500 / ลำ)</p>
+      <div class="metric-grid" style="grid-template-columns:repeat(3,1fr);">
+        <div class="metric-card"><div class="metric-ico ico-a">⏳</div><div class="metric-lbl">รอจ่าย</div><div class="metric-val" id="c-pending">฿0</div><div class="metric-note">0 ลำ</div></div>
+        <div class="metric-card"><div class="metric-ico ico-g">✅</div><div class="metric-lbl">จ่ายแล้วเดือนนี้</div><div class="metric-val">฿0</div><div class="metric-note up">0 ลำ</div></div>
+        <div class="metric-card"><div class="metric-ico ico-b">📅</div><div class="metric-lbl">รอบจ่ายถัดไป</div><div class="metric-val" style="font-size:16px;">1 มิ.ย. 68</div><div class="metric-note">-</div></div>
+      </div>
+      <div class="card"><div class="card-title">แยกตามโรงแรม</div><div class="comm-grid" id="comm-grid"></div></div>
+      <div class="card"><div class="card-title">ประวัติการจ่าย</div><div id="comm-hist"></div></div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div id="screen-settings" class="screen">
+      <p class="page-title">ตั้งค่าระบบ</p>
+      <p class="page-sub">กำหนดบัญชีธนาคาร, LINE OA Token และข้อมูลธุรกิจ</p>
+
+      <div class="card">
+        <div class="card-title">🏦 บัญชีธนาคาร (แสดงให้ลูกค้าโอนเงิน)</div>
+
+        <div class="setting-row">
+          <div class="setting-label"><strong>ธนาคาร</strong><span>ที่ลูกค้าจะโอนมา</span></div>
+          <div class="setting-input">
+            <select id="cfg-bank" onchange="saveSettings()">
+              <option value="kbank">กสิกรไทย (KBANK)</option>
+              <option value="scb">ไทยพาณิชย์ (SCB)</option>
+              <option value="bbl">กรุงเทพ (BBL)</option>
+              <option value="ktb" selected>กรุงไทย (KTB)</option>
+            </select>
+          </div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-label"><strong>เลขบัญชี</strong><span>ไม่ต้องมีขีด</span></div>
+          <div class="setting-input">
+            <input type="text" id="cfg-accno" placeholder="xxx-x-xxxxx-x" value="017-055487-2" onchange="saveSettings()">
+          </div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-label"><strong>ชื่อบัญชี</strong><span>ชื่อที่ปรากฏในสลิป</span></div>
+          <div class="setting-input">
+            <input type="text" id="cfg-accname" placeholder="ชื่อ-นามสกุล หรือชื่อบริษัท" value="บริษัท ศักดิ์สุภา ดีเวลลอปเม้นท์ จำกัด" onchange="saveSettings()">
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">📲 LINE OA (แจ้งเตือนเมื่อมีการจอง)</div>
+        <div class="setting-row">
+          <div class="setting-label"><strong>Channel Access Token</strong><span>จาก LINE Developers Console</span></div>
+          <div class="setting-input">
+            <input type="text" id="cfg-line-token" value="3793971c389b46bd7f07901d566e1bbf" placeholder="วาง Channel Access Token ที่นี่" onchange="saveSettings()">
+            <div style="font-size:11px; color:var(--n400); margin-top:5px;">
+              สมัครที่ <a href="https://developers.line.biz/" target="_blank" style="color:var(--g400);">developers.line.biz</a> → สร้าง Messaging API channel → คัดลอก Channel Access Token
+            </div>
+          </div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-label"><strong>User ID / Group ID</strong><span>ปลายทางรับข้อความ</span></div>
+          <div class="setting-input">
+            <input type="text" id="cfg-line-uid" value="2007208453" placeholder="Uxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" onchange="saveSettings()">
+            <div style="font-size:11px; color:var(--n400); margin-top:5px;">ส่งข้อความหา LINE OA แล้วดู User ID ใน Webhook หรือใช้ <code style="background:var(--n100);padding:1px 4px;border-radius:3px;">@linebot getid</code></div>
+          </div>
+        </div>
+        <div class="setting-row" style="border:none;">
+          <div class="setting-label"></div>
+          <div class="setting-input">
+            <button class="btn-primary" onclick="testLine()">📤 ทดสอบส่งข้อความ</button>
+            <div class="setting-saved" id="line-test-result"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🚣 ข้อมูลธุรกิจ</div>
+        <div class="setting-row">
+          <div class="setting-label"><strong>ชื่อธุรกิจ</strong></div>
+          <div class="setting-input"><input type="text" id="cfg-biz" value="ล่องแก่งสยาม" onchange="saveSettings()"></div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-label"><strong>ความจุต่อลำ (คน)</strong></div>
+          <div class="setting-input"><input type="number" id="cfg-cap" value="6" min="1" max="20" onchange="saveSettings()"></div>
+        </div>
+        <div class="setting-row" style="border:none;">
+          <div class="setting-label"><strong>Base URL ระบบ</strong><span>ใส่หลัง deploy</span></div>
+          <div class="setting-input"><input type="text" id="cfg-url" value="https://longkaeng.com/จอง" onchange="saveSettings()"></div>
+        </div>
+      </div>
+
+      <button class="btn-primary" onclick="saveSettings(true)">💾 บันทึกการตั้งค่า</button>
+      <span id="saved-msg" style="display:none; font-size:13px; color:var(--g400); margin-left:12px;">✓ บันทึกแล้ว</span>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /admin-shell -->
+
+<!-- ════ CUSTOMER BOOKING PAGE ════ -->
+<div class="booking-page" id="booking-page">
+  <div class="bk-header">
+    <h1 id="bk-biz-name">จองเรือล่องแก่ง</h1>
+    <p>ประสบการณ์ล่องแก่งระดับธรรมชาติ</p>
+    <div class="bk-source-pill" id="bk-source-pill">🏨 <span id="bk-source-name">River View Hotel</span></div>
+  </div>
+
+  <!-- Steps -->
+  <div class="steps">
+    <div class="step active" id="step-ind-1"><div class="step-num">1</div> ข้อมูลการจอง</div>
+    <div class="step-sep" id="sep-12"></div>
+    <div class="step" id="step-ind-2"><div class="step-num">2</div> ชำระเงิน</div>
+    <div class="step-sep" id="sep-23"></div>
+    <div class="step" id="step-ind-3"><div class="step-num">3</div> ยืนยัน</div>
+  </div>
+
+  <div class="bk-body">
+
+    <!-- ── STEP 1: Info ── -->
+    <div class="step-panel active" id="panel-1">
+      <div class="bk-card">
+        <h2>ข้อมูลผู้จอง</h2>
+        <div class="bfield"><label>ชื่อ-นามสกุล *</label><input type="text" id="b-name" placeholder="สมชาย ใจดี"></div>
+        <div class="bfield"><label>เบอร์โทรศัพท์ *</label><input type="tel" id="b-phone" placeholder="08X-XXX-XXXX"></div>
+      </div>
+      <div class="bk-card">
+        <h2>เลือกวันเดินทาง</h2>
+        <div class="brow2">
+          <div class="bfield"><label>วันที่ *</label><input type="date" id="b-date"></div>
+          <div class="bfield"><label>เวลา</label>
+            <select id="b-time"><option>08:00 น.</option><option>10:00 น.</option><option>13:00 น.</option></select>
+          </div>
+        </div>
+        <div class="bfield">
+          <label>จำนวนผู้เดินทาง</label>
+          <div class="counter">
+            <button class="c-btn" onclick="chgPpl(-1)">−</button>
+            <span class="c-num" id="ppl-n">2</span>
+            <button class="c-btn" onclick="chgPpl(1)">+</button>
+            <span class="c-note">คน</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="price-box">
+        <div class="prow"><span>ราคาต่อลำ</span><span>฿3,500</span></div>
+        <div class="prow"><span>จำนวนลำ</span><span id="boat-cnt">× 1 ลำ</span></div>
+        <div class="prow ptotal"><span>รวมทั้งหมด</span><span id="price-total">฿3,500</span></div>
+        <div class="pcap-note" id="cap-note">บรรจุสูงสุด 6 คน / ลำ</div>
+      </div>
+
+      <button class="btn-next" onclick="goStep2()">ถัดไป: เลือกวิธีชำระเงิน →</button>
+    </div>
+
+    <!-- ── STEP 2: Payment ── -->
+    <div class="step-panel" id="panel-2">
+      <div class="bank-card" id="bank-card">
+        <h2>โอนเงินมาที่บัญชีนี้</h2>
+        <div class="bank-info">
+          <div class="bank-logo ktb" id="bank-logo">🔷</div>
+          <div>
+            <div style="font-size:12px; color:var(--n400);" id="bank-name-txt">กรุงไทย (KTB)</div>
+            <div class="bank-num" id="bank-num">017-055487-2</div>
+            <div class="bank-acname" id="bank-acname">บริษัท ศักดิ์สุภา ดีเวลลอปเม้นท์ จำกัด</div>
+          </div>
+        </div>
+        <div class="amount-due">
+          <span>ยอดที่ต้องโอน</span>
+          <strong id="due-amount">฿3,500</strong>
+        </div>
+      </div>
+
+      <div class="bk-card">
+        <h2>อัพโหลดสลิปโอนเงิน</h2>
+        <div class="upload-zone" id="upload-zone" onclick="triggerUpload()">
+          <input type="file" id="slip-input" accept="image/*" onchange="handleSlip(event)" onclick="event.stopPropagation()">
+          <div id="upload-placeholder">
+            <div class="upload-icon">📎</div>
+            <p>แตะเพื่อเลือกรูปสลิป</p>
+            <small>รองรับ JPG, PNG · ขนาดไม่เกิน 5MB</small>
+          </div>
+        </div>
+        <div class="slip-preview" id="slip-preview">
+          <img id="slip-img" src="" alt="สลิป">
+          <button class="slip-remove" onclick="removeSlip()">✕</button>
+        </div>
+      </div>
+
+      <button class="btn-book" id="btn-submit" onclick="submitBooking()" disabled>
+        ✅ ยืนยันการจองและส่งสลิป
+      </button>
+      <button class="btn-outline" style="width:100%; margin-top:8px; text-align:center;" onclick="goStep1()">← ย้อนกลับ</button>
+    </div>
+
+    <!-- ── STEP 3: Success ── -->
+    <div class="step-panel" id="panel-3">
+      <div class="success-wrap">
+        <div class="success-circle">✅</div>
+        <h2>จองสำเร็จ!</h2>
+        <p>เราจะโทรยืนยันภายใน 1 ชั่วโมง</p>
+        <div class="ref-block">
+          <div class="ref-num" id="ref-no">RR-2025-0001</div>
+          <div class="ref-detail" id="ref-detail"></div>
+        </div>
+        <div class="line-sent" id="line-sent-note">
+          📲 ส่งรายละเอียดไปยัง LINE OA แล้ว
+        </div>
+        <button class="btn-primary" style="margin-top:1rem; width:100%; justify-content:center;" onclick="resetBooking()">🔄 จองใหม่</button>
+      </div>
+    </div>
+
+  </div><!-- /bk-body -->
+</div><!-- /booking-page -->
+
+<!-- QR MODAL -->
+<div class="modal-backdrop" id="qr-modal">
+  <div class="modal-box">
+    <h3 id="qr-hotel">QR Code</h3>
+    <p class="modal-sub" id="qr-sub">สแกนเพื่อจองเรือล่องแก่ง</p>
+    <div class="qr-frame" id="qr-frame"></div>
+    <div class="qr-url-box" id="qr-url"></div>
+    <div class="modal-btns">
+      <button class="btn-outline" onclick="closeQR()">ปิด</button>
+      <button class="btn-primary" onclick="dlQR()">⬇️ ดาวน์โหลด</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+/* ── CONSTANTS ── */
+const PRICE = 3500, COMM = 500;
+let CFG = {
+  bank:'ktb', accno:'017-055487-2', accname:'บริษัท ศักดิ์สุภา ดีเวลลอปเม้นท์ จำกัด',
+  lineToken:'3793971c389b46bd7f07901d566e1bbf', lineUid:'2007208453', bizName:'ล่องแก่งสยาม', cap:6,
+  baseUrl:'https://saksupharafting.netlify.app'
+};
+const BANK_MAP = {
+  kbank:{ name:'กสิกรไทย (KBANK)', cls:'kbank', icon:'🟢' },
+  scb:  { name:'ไทยพาณิชย์ (SCB)', cls:'scb',   icon:'🟣' },
+  bbl:  { name:'กรุงเทพ (BBL)',    cls:'bbl',   icon:'🔵' },
+  ktb:  { name:'กรุงไทย (KTB)',    cls:'ktb',   icon:'🔷' },
+};
+
+let hotels = [];
+const recentData = [];
+
+let ppl=2, currentSource='rvh', currentSourceName='River View Hotel', slipData=null;
+
+/* ── ADMIN NAV ── */
+function switchTab(el,id) {
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('screen-'+id).classList.add('active');
+}
+
+/* ── HELPERS ── */
+function ini(n) { const p=n.trim().split(' '); return p.length>=2?(p[0][0]+p[1][0]).toUpperCase():n.slice(0,2).toUpperCase(); }
+function boats(p) { return Math.max(1,Math.ceil(p/CFG.cap)); }
+function fmt(n) { return '฿'+n.toLocaleString(); }
+
+/* ── DASHBOARD ── */
+async function renderDash() {
+  document.getElementById('recent-list').innerHTML='<div style="text-align:center;padding:1rem;color:var(--n400)">⏳ กำลังโหลด...</div>';
+  
+  try {
+    const res = await fetch('https://script.google.com/macros/s/AKfycbzTeGO4HrOrrSMToMDCmDLRRNSMqEqIc1ufLF0SH9O4G_959EpTCO6aeqTIy6DAWNiLlw/exec');
+    const json = await res.json();
+    const rows = json.data || [];
+
+    // คำนวณยอดรวม
+    const tot = rows.length;
+    const totalRev = rows.reduce((a,r) => a + (parseFloat((r['ยอดรวม']||'').replace(/[฿,]/g,''))||0), 0);
+    const totalComm = tot * COMM;
+
+    document.getElementById('m-bk').textContent = tot;
+    document.getElementById('m-rev').textContent = fmt(totalRev||tot*PRICE);
+    document.getElementById('m-comm').textContent = fmt(totalComm);
+    document.getElementById('m-ht').textContent = hotels.length;
+
+    // กราฟรายสัปดาห์ (4 สัปดาห์ล่าสุด)
+    const now = new Date();
+    const wkCounts = [0,0,0,0];
+    rows.forEach(r => {
+      const d = new Date(r['วันที่จอง']);
+      const diff = Math.floor((now - d) / (7*24*60*60*1000));
+      if(diff >= 0 && diff < 4) wkCounts[3-diff]++;
+    });
+    const mx = Math.max(...wkCounts, 1);
+    const wks = ['สป.1','สป.2','สป.3','สป.4'];
+    document.getElementById('wchart').innerHTML = wkCounts.map((v,i)=>`<div class="bar-col"><div class="bar-n">${v}</div><div class="bar${i===3?' hi':''}" style="height:${Math.round(v/mx*85)}px"></div></div>`).join('');
+    document.getElementById('wlabels').innerHTML = wks.map(w=>`<span>${w}</span>`).join('');
+
+    // ยอดตามโรงแรม
+    const hotelMap = {};
+    rows.forEach(r => {
+      const h = r['โรงแรม']||'ไม่ระบุ';
+      hotelMap[h] = (hotelMap[h]||0) + 1;
+    });
+    const hotelEntries = Object.entries(hotelMap).sort((a,b)=>b[1]-a[1]);
+    const hmx = Math.max(...hotelEntries.map(e=>e[1]), 1);
+    document.getElementById('source-bars').innerHTML = hotelEntries.length
+      ? hotelEntries.map(([name,cnt])=>`
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+          <div style="font-size:12px;color:var(--n600);width:130px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${name}</div>
+          <div style="flex:1;background:var(--n100);border-radius:4px;height:8px"><div style="width:${Math.round(cnt/hmx*100)}%;height:100%;background:var(--g400);border-radius:4px"></div></div>
+          <div style="font-size:12px;font-weight:600;width:20px;text-align:right">${cnt}</div>
+        </div>`).join('')
+      : '<div style="font-size:13px;color:var(--n400)">ยังไม่มีการจอง</div>';
+
+    // รายการจองล่าสุด
+    const recent = rows.slice().reverse().slice(0,5);
+    document.getElementById('recent-list').innerHTML = recent.length
+      ? recent.map(b=>`
+        <div class="brow">
+          <div class="avi">${ini(b['ชื่อ']||'?')}</div>
+          <div style="flex:1">
+            <div class="bname">${b['ชื่อ']||'-'}</div>
+            <div class="bdetail">${b['วันเดินทาง']||''} · ${b['เวลา']||''} · ${b['จำนวนคน']||''}คน · ${b['จำนวนลำ']||''}ลำ</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px">
+            <span class="src-pill">${b['โรงแรม']||'-'}</span>
+            <span class="slip-badge ${b['สลิป']==='✅ มีสลิป'?'slip-ok':'slip-wait'}">${b['สลิป']||'⏳ รอสลิป'}</span>
+          </div>
+          <div style="text-align:right;margin-left:10px">
+            <div class="bamt">${b['ยอดรวม']||'-'}</div>
+            <div class="bcomm">คอม ${fmt(COMM)}</div>
+          </div>
+        </div>`).join('')
+      : '<div style="font-size:13px;color:var(--n400);padding:1rem 0">ยังไม่มีการจอง</div>';
+
+  } catch(e) {
+    document.getElementById('recent-list').innerHTML='<div style="font-size:13px;color:var(--r400);padding:1rem 0">❌ โหลดข้อมูลไม่ได้ กรุณารีเฟรช</div>';
+  }
+}
+
+/* ── HOTELS ── */
+function renderHotels() {
+  document.getElementById('m-ht').textContent=hotels.length;
+  document.getElementById('htbody').innerHTML=hotels.map(h=>`
+    <tr>
+      <td><strong>${h.name}</strong></td>
+      <td>${h.bookings} ลำ</td>
+      <td>${fmt(h.bookings*PRICE)}</td>
+      <td><span class="cpill">${fmt(COMM)}/ลำ</span></td>
+      <td style="font-weight:600;color:var(--a400)">${fmt(h.bookings*COMM)}</td>
+      <td><button class="btn-qr" onclick="showQR('${h.id}','${h.name}')">🔲 QR Code</button></td>
+    </tr>`).join('');
+}
+async function addHotel() {
+  const nm=document.getElementById('new-name').value.trim();
+  if(!nm){alert('กรุณากรอกชื่อโรงแรม');return;}
+  const id='h'+Date.now();
+  hotels.push({id,name:nm,bookings:0});
+  document.getElementById('new-name').value='';
+  // บันทึกลง Sheet
+  await fetch('https://script.google.com/macros/s/AKfycbzTeGO4HrOrrSMToMDCmDLRRNSMqEqIc1ufLF0SH9O4G_959EpTCO6aeqTIy6DAWNiLlw/exec', {
+    method:'POST', mode:'no-cors',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({action:'add_hotel', id, name:nm, comm:500})
+  });
+  renderHotels(); renderDash(); renderCommission();
+}
+
+/* ── COMMISSION ── */
+function renderCommission() {
+  const tot=hotels.reduce((a,h)=>a+h.bookings,0);
+  document.getElementById('c-pending').textContent=fmt(tot*COMM);
+  document.getElementById('comm-grid').innerHTML=hotels.map(h=>`
+    <div class="ccard"><div class="cname">${h.name}</div><div class="csub">${h.bookings} ลำ</div><div class="cowed">${fmt(h.bookings*COMM)}</div></div>`).join('');
+  document.getElementById('comm-hist').innerHTML=[
+
+  ].map(r=>`<div class="brow">
+    <div style="flex:1"><div class="bname">${r.hotel}</div><div class="bdetail">${r.date} · ${r.boats} ลำ</div></div>
+    <div><div class="bamt">${fmt(r.boats*COMM)}</div><div style="font-size:11px;color:var(--g400);text-align:right;margin-top:2px">✓ จ่ายแล้ว</div></div>
+  </div>`).join('');
+}
+
+/* ── SETTINGS ── */
+function saveSettings(showMsg=false) {
+  CFG.bank     = document.getElementById('cfg-bank').value;
+  CFG.accno    = document.getElementById('cfg-accno').value;
+  CFG.accname  = document.getElementById('cfg-accname').value;
+  CFG.lineToken= document.getElementById('cfg-line-token').value;
+  CFG.lineUid  = document.getElementById('cfg-line-uid').value;
+  CFG.bizName  = document.getElementById('cfg-biz').value;
+  CFG.cap      = parseInt(document.getElementById('cfg-cap').value)||6;
+  CFG.baseUrl  = document.getElementById('cfg-url').value;
+  if(showMsg){
+    const msg=document.getElementById('saved-msg');
+    msg.style.display='inline'; setTimeout(()=>msg.style.display='none',2500);
+  }
+}
+
+async function testLine() {
+  saveSettings();
+  const el=document.getElementById('line-test-result');
+  if(!CFG.lineToken||!CFG.lineUid){el.style.display='block';el.style.color='var(--r400)';el.textContent='⚠️ กรุณากรอก Token และ User ID ก่อน';return;}
+  el.style.display='block';el.style.color='var(--n400)';el.textContent='⏳ กำลังส่ง...';
+  const ok=await sendLine(`🧪 ทดสอบระบบแจ้งเตือน\n✅ LINE OA เชื่อมต่อสำเร็จ\n🚣 ${CFG.bizName}`);
+  el.style.color=ok?'var(--g400)':'var(--r400)';
+  el.textContent=ok?'✅ ส่งสำเร็จ! ตรวจสอบ LINE ของคุณ':'❌ ส่งไม่สำเร็จ — ตรวจสอบ Token และ User ID อีกครั้ง';
+}
+
+/* ── LINE NOTIFY ── */
+async function sendLine(text) {
+  return false; // LINE disabled
+}
+
+async function saveToSheet(data) {
+  try {
+    const res = await fetch('https://script.google.com/macros/s/AKfycbzTeGO4HrOrrSMToMDCmDLRRNSMqEqIc1ufLF0SH9O4G_959EpTCO6aeqTIy6DAWNiLlw/exec', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    return res.ok;
+  } catch(e) { return false; }
+}
+
+/* ── CUSTOMER BOOKING ── */
+function previewCustomer() {
+  saveSettings();
+  document.getElementById('admin-shell').style.display='none';
+  document.getElementById('booking-page').classList.add('show');
+  document.getElementById('bk-biz-name').textContent='จองเรือล่องแก่ง — '+CFG.bizName;
+  updateBankUI();
+  goStep1();
+}
+function backToAdmin() {
+  document.getElementById('admin-shell').style.display='flex';
+  document.getElementById('booking-page').classList.remove('show');
+}
+
+function updateBankUI() {
+  const b=BANK_MAP[CFG.bank]||BANK_MAP.kbank;
+  document.getElementById('bank-logo').textContent=b.icon;
+  document.getElementById('bank-logo').className='bank-logo '+b.cls;
+  document.getElementById('bank-name-txt').textContent=b.name;
+  document.getElementById('bank-num').textContent=CFG.accno;
+  document.getElementById('bank-acname').textContent=CFG.accname;
+}
+
+function setStep(n) {
+  [1,2,3].forEach(i=>{
+    const ind=document.getElementById('step-ind-'+i);
+    const pan=document.getElementById('panel-'+i);
+    ind.classList.remove('active','done');
+    pan.classList.remove('active');
+    if(i<n)  ind.classList.add('done');
+    if(i===n){ ind.classList.add('active'); pan.classList.add('active'); }
+  });
+  if(n>1) document.getElementById('sep-12').classList.add('done'); else document.getElementById('sep-12').classList.remove('done');
+  if(n>2) document.getElementById('sep-23').classList.add('done'); else document.getElementById('sep-23').classList.remove('done');
+}
+
+function goStep1() { setStep(1); }
+function goStep2() {
+  const nm=document.getElementById('b-name').value.trim();
+  const ph=document.getElementById('b-phone').value.trim();
+  const dt=document.getElementById('b-date').value;
+  if(!nm||!ph||!dt){alert('กรุณากรอกข้อมูลให้ครบ');return;}
+  updateBankUI();
+  const b=boats(ppl);
+  document.getElementById('due-amount').textContent=fmt(b*PRICE);
+  setStep(2);
+}
+
+function chgPpl(d) {
+  ppl=Math.max(1,Math.min(30,ppl+d));
+  document.getElementById('ppl-n').textContent=ppl;
+  const b=boats(ppl);
+  document.getElementById('boat-cnt').textContent=`× ${b} ลำ`;
+  document.getElementById('price-total').textContent=fmt(b*PRICE);
+  document.getElementById('cap-note').textContent=b===1?`บรรจุสูงสุด ${CFG.cap} คน / ลำ`:`${ppl} คน → ต้องการ ${b} ลำ (สูงสุด ${CFG.cap} คน/ลำ)`;
+}
+
+/* SLIP */
+function triggerUpload() { document.getElementById('slip-input').click(); }
+function handleSlip(e) {
+  const file=e.target.files[0];
+  if(!file)return;
+  if(file.size>5*1024*1024){alert('ไฟล์ใหญ่เกิน 5MB');return;}
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    slipData=ev.target.result;
+    document.getElementById('slip-preview').style.display='block';
+    document.getElementById('upload-placeholder').style.display='none';
+    document.getElementById('slip-img').src=slipData;
+    document.getElementById('btn-submit').disabled=false;
+  };
+  reader.readAsDataURL(file);
+}
+function removeSlip() {
+  slipData=null;
+  document.getElementById('slip-preview').style.display='none';
+  document.getElementById('upload-placeholder').style.display='block';
+  document.getElementById('slip-input').value='';
+  document.getElementById('btn-submit').disabled=true;
+}
+
+async function submitBooking() {
+  const name=document.getElementById('b-name').value.trim();
+  const phone=document.getElementById('b-phone').value.trim();
+  const date=document.getElementById('b-date').value;
+  const time=document.getElementById('b-time').value;
+  const b=boats(ppl);
+  const total=b*PRICE;
+  const refNo='RR-'+new Date().getFullYear()+'-'+String(Math.floor(Math.random()*9000)+1000);
+
+  document.getElementById('ref-no').textContent=refNo;
+  document.getElementById('ref-detail').innerHTML=
+    `ชื่อ: ${name}\nโทร: ${phone}\nวันที่: ${date} เวลา ${time}\nจำนวน: ${ppl} คน · ${b} ลำ\nยอดรวม: ${fmt(total)}\nโรงแรม: ${currentSourceName}`
+    .split('\n').join('<br>');
+
+  /* ── บันทึกลง Google Sheet ── */
+  const ok = await saveToSheet({
+    ref_no: refNo,
+    date: date,
+    time: time,
+    name: name,
+    phone: phone,
+    people: ppl,
+    boats: b,
+    amount: fmt(total),
+    hotel: currentSourceName,
+    slip: !!slipData
+  });
+  document.getElementById('line-sent-note').textContent = ok ? '📊 บันทึกลง Google Sheet แล้ว' : '📋 บันทึกการจองแล้ว';
+  setStep(3);
+}
+
+function resetBooking() {
+  slipData=null; ppl=2;
+  document.getElementById('b-name').value='';
+  document.getElementById('b-phone').value='';
+  document.getElementById('b-date').value=new Date().toISOString().split('T')[0];
+  document.getElementById('ppl-n').textContent=2;
+  document.getElementById('boat-cnt').textContent='× 1 ลำ';
+  document.getElementById('price-total').textContent='฿3,500';
+  document.getElementById('cap-note').textContent=`บรรจุสูงสุด ${CFG.cap} คน / ลำ`;
+  removeSlip();
+  setStep(1);
+}
+
+/* ── QR ── */
+function showQR(id,name) {
+  currentSource=id; currentSourceName=name;
+  document.getElementById('qr-hotel').textContent=name;
+  document.getElementById('qr-sub').textContent='วาง QR นี้ที่ Lobby หรือห้องพัก';
+  const url=`${CFG.baseUrl}?source=${id}`;
+  document.getElementById('qr-url').textContent=url;
+  const frame=document.getElementById('qr-frame'); frame.innerHTML='';
+  new QRCode(frame,{text:url,width:180,height:180,colorDark:'#085041',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});
+  document.getElementById('qr-modal').classList.add('open');
+}
+function closeQR(){document.getElementById('qr-modal').classList.remove('open');}
+function dlQR(){
+  setTimeout(()=>{
+    const img=document.querySelector('#qr-frame img'); if(!img)return;
+    const a=document.createElement('a'); a.href=img.src;
+    a.download=`QR-${document.getElementById('qr-hotel').textContent}.png`; a.click();
+  },100);
+}
+
+/* ── QR from URL param (when customer scans) ── */
+function checkUrlSource() {
+  const p=new URLSearchParams(window.location.search);
+  const src=p.get('source');
+  if(src){
+    const h=hotels.find(h=>h.id===src);
+    currentSource=src;
+    currentSourceName=h?h.name:src;
+    document.getElementById('bk-source-name').textContent=currentSourceName;
+    document.getElementById('admin-shell').style.display='none';
+    document.getElementById('booking-page').classList.add('show');
+  }
+}
+
+/* ── INIT ── */
+document.getElementById('b-date').value=new Date().toISOString().split('T')[0];
+loadHotels().then(()=>{ renderDash(); renderHotels(); renderCommission(); });
+checkUrlSource();
+
+async function loadHotels() {
+  try {
+    const res = await fetch('https://script.google.com/macros/s/AKfycbzTeGO4HrOrrSMToMDCmDLRRNSMqEqIc1ufLF0SH9O4G_959EpTCO6aeqTIy6DAWNiLlw/exec?action=hotels');
+    const json = await res.json();
+    if(json.hotels && json.hotels.length > 0) {
+      hotels = json.hotels.map(h=>({
+        id: h.id, name: h.name, bookings: parseInt(h.bookings)||0
+      }));
+    }
+  } catch(e) { console.log('loadHotels error', e); }
+}
+</script>
+</body>
+</html>

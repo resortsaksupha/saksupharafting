@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="th" id="html-root">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="page-title">ศักดิ์สุภา ล่องแก่งหินเพิง — จองเรือ</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600&family=Noto+Serif+Thai:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --g50:#E8F5F0;--g100:#A8DECE;--g300:#3DB88A;--g400:#1D9E75;--g600:#0F6E56;--g800:#085041;
+  --a50:#FFF8EC;--a300:#FAC775;--a400:#BA7517;--a800:#633806;
+  --n0:#fff;--n50:#F7F6F3;--n100:#EEECEA;--n200:#D4D2CA;--n400:#9B9991;--n600:#5F5E5A;--n800:#2C2C2A;
+  --r400:#E53935;--r50:#FFEBEE;
+  --rad:14px;--radsm:8px;
+  --font-th:'Sarabun',sans-serif;
+  --font-serif:'Noto Serif Thai',serif;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--font-th);background:var(--n50);color:var(--n800);min-height:100vh}
+
+.cust-page{min-height:100vh;background:var(--n50)}
+.cust-header{background:var(--g800);padding:2rem 1.25rem 1.5rem;text-align:center;position:relative;overflow:hidden}
+.cust-header::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 70% 30%,rgba(29,158,117,.3) 0%,transparent 60%);pointer-events:none}
+.cust-header h1{font-family:var(--font-serif);font-size:22px;font-weight:700;color:#fff;position:relative}
+.cust-header p{font-size:13px;color:var(--g100);margin-top:4px;position:relative}
+.src-badge{display:inline-flex;align-items:center;gap:5px;margin-top:10px;background:rgba(255,255,255,.13);color:var(--g100);font-size:11px;padding:4px 12px;border-radius:20px;position:relative}
+.trust-bar{display:flex;justify-content:center;gap:16px;padding:.75rem 1rem;background:rgba(255,255,255,.07);flex-wrap:wrap}
+.trust-item{font-size:11px;color:var(--g100);display:flex;align-items:center;gap:4px}
+
+.steps{display:flex;align-items:center;justify-content:center;padding:1.25rem 1rem .75rem;gap:0}
+.step{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--n400)}
+.step-num{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--n200);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;transition:all .15s;flex-shrink:0}
+.step.done .step-num{background:var(--g400);border-color:var(--g400);color:#fff}
+.step.active .step-num{background:var(--n800);border-color:var(--n800);color:#fff}
+.step.active{color:var(--n800);font-weight:500}
+.step-sep{width:32px;height:1.5px;background:var(--n200);margin:0 4px}
+.step-sep.done{background:var(--g400)}
+.panel{display:none}.panel.active{display:block}
+.cust-body{max-width:480px;margin:0 auto;padding:0 1rem 2rem}
+
+.bk-card{background:var(--n0);border-radius:var(--rad);border:1px solid var(--n100);padding:1.25rem;margin-bottom:.875rem}
+.bk-card h2{font-size:12px;font-weight:600;color:var(--n400);text-transform:uppercase;letter-spacing:.06em;margin-bottom:1rem}
+.bfield{margin-bottom:13px}
+.bfield:last-child{margin-bottom:0}
+.bfield label{font-size:12px;color:var(--n600);display:block;margin-bottom:5px}
+.bfield input,.bfield select{width:100%;padding:10px 13px;font-size:14px;border:1.5px solid var(--n200);border-radius:var(--radsm);background:var(--n0);color:var(--n800);font-family:var(--font-th);outline:none;transition:border-color .15s}
+.bfield input:focus,.bfield select:focus{border-color:var(--g400);box-shadow:0 0 0 3px rgba(29,158,117,.12)}
+.brow2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.counter{display:flex;align-items:center;gap:10px}
+.c-btn{width:36px;height:36px;border:1.5px solid var(--n200);background:var(--n0);border-radius:8px;font-size:20px;cursor:pointer;color:var(--n800);display:flex;align-items:center;justify-content:center;transition:all .15s;line-height:1}
+.c-btn:hover{border-color:var(--g400);color:var(--g400)}
+.c-num{font-size:20px;font-weight:600;min-width:36px;text-align:center}
+.c-note{font-size:12px;color:var(--n400)}
+
+.price-box{background:var(--g800);border-radius:var(--rad);padding:1.1rem 1.25rem;margin-bottom:.875rem;color:#fff}
+.prow{display:flex;justify-content:space-between;font-size:13px;padding:4px 0;color:var(--g100)}
+.prow.ptotal{font-size:17px;font-weight:600;color:#fff;border-top:1px solid rgba(255,255,255,.15);padding-top:10px;margin-top:5px}
+.pcap{font-size:11px;color:var(--g100);margin-top:6px}
+
+.bank-card{background:var(--n0);border-radius:var(--rad);border:1.5px solid var(--g400);padding:1.25rem;margin-bottom:.875rem}
+.bank-card h2{font-size:12px;font-weight:600;color:var(--n400);text-transform:uppercase;letter-spacing:.06em;margin-bottom:1rem}
+.bank-info{display:flex;align-items:center;gap:14px}
+.bank-logo{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;background:#1565C0;color:#fff}
+.bank-num{font-family:monospace;font-size:20px;font-weight:600;letter-spacing:.08em;color:var(--n800)}
+.bank-nm{font-size:13px;color:var(--n400);margin-top:2px}
+.bank-acname{font-size:14px;font-weight:500;color:var(--n800);margin-top:8px;border-top:1px solid var(--n100);padding-top:8px}
+.amt-due{background:var(--a50);border:1px solid var(--a300);border-radius:var(--radsm);padding:10px 14px;margin-top:10px;display:flex;align-items:center;justify-content:space-between}
+.amt-due span{font-size:13px;color:var(--a400)}
+.amt-due strong{font-size:18px;font-weight:600;color:var(--a800)}
+
+.upload-zone{border:2px dashed var(--n200);border-radius:var(--rad);padding:2rem 1rem;text-align:center;cursor:pointer;transition:all .15s;background:var(--n50);position:relative}
+.upload-zone:hover{border-color:var(--g400);background:var(--g50)}
+.upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
+.upload-icon{font-size:36px;margin-bottom:10px;color:var(--n400)}
+.upload-zone p{font-size:13px;color:var(--n600)}
+.upload-zone small{font-size:11px;color:var(--n400);margin-top:4px;display:block}
+.slip-preview{display:none;border-radius:var(--rad);overflow:hidden;border:1px solid var(--n200);position:relative}
+.slip-preview img{width:100%;display:block;max-height:280px;object-fit:contain;background:var(--n100)}
+.slip-remove{position:absolute;top:8px;right:8px;background:rgba(0,0,0,.55);color:#fff;border:none;border-radius:50%;width:28px;height:28px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+
+.success-wrap{text-align:center;padding:2rem 1rem}
+.success-circle{width:72px;height:72px;background:var(--g50);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem;font-size:30px;color:var(--g400)}
+.success-wrap h2{font-family:var(--font-serif);font-size:22px;font-weight:700;margin-bottom:6px}
+.success-wrap p{font-size:13px;color:var(--n400)}
+.ref-block{background:var(--g50);border-radius:var(--rad);padding:1rem 1.25rem;margin:1.1rem 0;text-align:left}
+.ref-num{font-size:20px;font-weight:700;color:var(--g800);margin-bottom:8px}
+.sheet-note{background:#E8F5E9;border-radius:var(--radsm);padding:10px 14px;font-size:12px;color:#2E7D32;display:flex;align-items:center;gap:8px;margin-top:8px}
+.contact-bar{display:flex;justify-content:center;gap:12px;margin-top:1rem;flex-wrap:wrap}
+.contact-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:20px;font-size:13px;font-weight:500;text-decoration:none;border:1px solid var(--n200);color:var(--n800);background:var(--n0)}
+
+.btn-book{width:100%;background:var(--g400);color:#fff;border:none;padding:14px;border-radius:var(--rad);font-size:15px;font-weight:600;cursor:pointer;font-family:var(--font-serif);display:flex;align-items:center;justify-content:center;gap:8px;transition:background .15s;margin-top:.5rem}
+.btn-book:hover{background:var(--g600)}
+.btn-book:disabled{background:var(--n200);cursor:not-allowed;color:var(--n400)}
+.btn-next{width:100%;background:var(--n800);color:#fff;border:none;padding:13px;border-radius:var(--rad);font-size:14px;font-weight:500;cursor:pointer;font-family:var(--font-th);display:flex;align-items:center;justify-content:center;gap:8px;transition:background .15s;margin-top:.5rem}
+.btn-next:hover{background:var(--n600)}
+.btn-primary{background:var(--g400);color:#fff;border:none;padding:9px 20px;border-radius:var(--radsm);font-size:13px;font-weight:500;cursor:pointer;font-family:var(--font-th);display:inline-flex;align-items:center;gap:6px;transition:background .15s}
+.btn-primary:hover{background:var(--g600)}
+
+/* No hotel warning */
+.no-hotel{text-align:center;padding:2rem 1rem}
+.no-hotel h2{font-family:var(--font-serif);font-size:20px;margin-bottom:8px}
+.no-hotel p{font-size:13px;color:var(--n400)}
+
+/* LANG TOGGLE */
+.lang-toggle{position:absolute;top:16px;right:16px;z-index:5;display:flex;background:rgba(255,255,255,.15);border-radius:20px;padding:3px;gap:2px}
+.lang-btn{border:none;background:none;color:var(--g100);font-size:12px;font-weight:600;padding:5px 12px;border-radius:16px;cursor:pointer;font-family:var(--font-th);transition:all .15s}
+.lang-btn.active{background:#fff;color:var(--g800)}
+
+/* DISCOUNT CODE */
+.discount-row{display:flex;gap:8px}
+.discount-row input{flex:1}
+.btn-apply{padding:0 18px;background:var(--n800);color:#fff;border:none;border-radius:var(--radsm);font-size:13px;font-weight:500;cursor:pointer;font-family:var(--font-th);white-space:nowrap}
+.btn-apply:hover{background:var(--g600)}
+.discount-msg{font-size:12px;margin-top:8px;display:none}
+.discount-msg.ok{color:var(--g600);display:block}
+.discount-msg.err{color:var(--r400);display:block}
+.prow.discount{color:var(--g200)}
+</style>
+</head>
+<body>
+
+<div class="cust-page">
+  <div class="cust-header">
+    <div class="lang-toggle">
+      <button class="lang-btn active" id="lang-th-btn" onclick="setLang('th')">ไทย</button>
+      <button class="lang-btn" id="lang-en-btn" onclick="setLang('en')">EN</button>
+    </div>
+    <h1 data-th="จองเรือล่องแก่งหินเพิง" data-en="Book Hin Perng Rafting">จองเรือล่องแก่งหินเพิง</h1>
+    <p data-th="ศักดิ์สุภา ล่องแก่งหินเพิง · 062-5249698" data-en="Saksupha Hin Perng Rafting · 062-5249698">ศักดิ์สุภา ล่องแก่งหินเพิง · 062-5249698</p>
+    <div class="src-badge">🏨 <span id="src-name" data-th="กำลังโหลด..." data-en="Loading...">กำลังโหลด...</span></div>
+    <div class="trust-bar">
+      <span class="trust-item" data-th="🚣 ผู้บุกเบิกล่องแก่งหินเพิง" data-en="🚣 Hin Perng rafting pioneer">🚣 ผู้บุกเบิกล่องแก่งหินเพิง</span>
+      <span class="trust-item">⭐ รีวิวจากนักท่องเที่ยวจริง</span>
+      <span class="trust-item" data-th="📞 081-3432786" data-en="📞 081-3432786">📞 081-3432786</span>
+    </div>
+  </div>
+
+  <!-- NO HOTEL WARNING -->
+  <div id="no-hotel-msg" style="display:none">
+    <div class="no-hotel">
+      <div style="font-size:48px;margin-bottom:1rem">🔗</div>
+      <h2 data-th="QR Code ไม่ถูกต้อง" data-en="Invalid QR Code">QR Code ไม่ถูกต้อง</h2>
+      <p data-th="กรุณาสแกน QR Code จากโรงแรมพาร์ทเนอร์ของเรา<br>หรือติดต่อ 062-5249698" data-en="Please scan the QR Code from our partner hotel<br>or contact 062-5249698">กรุณาสแกน QR Code จากโรงแรมพาร์ทเนอร์ของเรา<br>หรือติดต่อ 062-5249698</p>
+    </div>
+  </div>
+
+  <!-- BOOKING FORM -->
+  <div id="booking-area">
+    <div class="steps">
+      <div class="step active" id="si-1"><div class="step-num">1</div> <span data-th="ข้อมูลการจอง" data-en="Booking info">ข้อมูลการจอง</span></div>
+      <div class="step-sep" id="sep-12"></div>
+      <div class="step" id="si-2"><div class="step-num">2</div> <span data-th="ชำระเงิน" data-en="Payment">ชำระเงิน</span></div>
+      <div class="step-sep" id="sep-23"></div>
+      <div class="step" id="si-3"><div class="step-num">3</div> <span data-th="ยืนยัน" data-en="Confirm">ยืนยัน</span></div>
+    </div>
+    <div class="cust-body">
+
+      <!-- STEP 1 -->
+      <div class="panel active" id="p1">
+        <div class="bk-card">
+          <h2 data-th="ข้อมูลผู้จอง" data-en="Booking details">ข้อมูลผู้จอง</h2>
+          <div class="bfield"><label data-th="ชื่อ-นามสกุล *" data-en="Full name *">ชื่อ-นามสกุล *</label><input type="text" id="b-name" placeholder="สมชาย ใจดี"></div>
+          <div class="bfield">
+            <label data-th="เบอร์โทรศัพท์ *" data-en="Phone number *">เบอร์โทรศัพท์ *</label>
+            <input type="tel" id="b-phone" placeholder="08X-XXX-XXXX" maxlength="10">
+          </div>
+        </div>
+        <div class="bk-card">
+          <h2 data-th="เลือกวันเดินทาง" data-en="Choose travel date">เลือกวันเดินทาง</h2>
+          <div class="brow2">
+            <div class="bfield"><label data-th="วันที่ *" data-en="Date *">วันที่ *</label><input type="date" id="b-date"></div>
+            <div class="bfield">
+              <label data-th="เวลาออกเดินทาง" data-en="Departure time">เวลาออกเดินทาง</label>
+              <input type="time" id="b-time" min="08:00" max="15:30" value="08:00">
+            </div>
+          </div>
+          <div class="bfield">
+            <label data-th="จำนวนผู้เดินทาง" data-en="Number of travelers">จำนวนผู้เดินทาง</label>
+            <div class="counter">
+              <button class="c-btn" onclick="chgPpl(-1)">−</button>
+              <span class="c-num" id="ppl-n">2</span>
+              <button class="c-btn" onclick="chgPpl(1)">+</button>
+              <span class="c-note" data-th="คน" data-en="people">คน</span>
+            </div>
+          </div>
+        </div>
+        <div class="bk-card">
+          <h2 data-th="โค้ดส่วนลด (ถ้ามี)" data-en="Discount code (optional)">โค้ดส่วนลด (ถ้ามี)</h2>
+          <div class="discount-row">
+            <input type="text" id="dc-input" placeholder="เช่น SUMMER10" style="text-transform:uppercase;padding:10px 13px;font-size:14px;border:1.5px solid var(--n200);border-radius:8px;font-family:var(--font-th)">
+            <button class="btn-apply" id="dc-apply-btn" onclick="applyDiscount()" data-th="ใช้โค้ด" data-en="Apply">ใช้โค้ด</button>
+          </div>
+          <div class="discount-msg" id="dc-msg"></div>
+        </div>
+        <div class="price-box">
+          <div class="prow"><span data-th="ราคาต่อลำ" data-en="Price per boat">ราคาต่อลำ</span><span>฿3,500</span></div>
+          <div class="prow"><span data-th="จำนวนลำ" data-en="Number of boats">จำนวนลำ</span><span id="boat-cnt">× 1 ลำ</span></div>
+          <div class="prow discount" id="discount-line" style="display:none"><span data-th="ส่วนลด" data-en="Discount">ส่วนลด</span><span id="discount-amt">-฿0</span></div>
+          <div class="prow ptotal"><span data-th="รวมทั้งหมด" data-en="Total">รวมทั้งหมด</span><span id="price-total">฿3,500</span></div>
+          <div class="pcap" id="cap-note" data-th="บรรจุสูงสุด 6 คน/ลำ" data-en="Max 6 people/boat">บรรจุสูงสุด 6 คน/ลำ</div>
+        </div>
+        <div class="contact-bar">
+          <a href="tel:0813432786" class="contact-btn">📞 081-3432786</a>
+          <a href="https://lin.ee/NmRS78o" target="_blank" class="contact-btn">💬 LINE OA</a>
+          <a href="https://maps.app.goo.gl/TKUEn2iRYEF5fkpC6" target="_blank" class="contact-btn">📍 แผนที่</a>
+        </div>
+        <button class="btn-next" style="margin-top:.75rem" onclick="goStep2()">ถัดไป: ชำระเงิน →</button>
+      </div>
+
+      <!-- STEP 2 -->
+      <div class="panel" id="p2">
+        <div class="bank-card">
+          <h2 data-th="เลือกวิธีชำระเงิน" data-en="Choose payment method">เลือกวิธีชำระเงิน</h2>
+          <div class="amt-due" style="margin-top:0"><span data-th="ยอดที่ต้องชำระ" data-en="Amount due">ยอดที่ต้องชำระ</span><strong id="due-amt">฿3,500</strong></div>
+        </div>
+
+        <!-- LOADING -->
+        <div class="bk-card" id="qr-loading" style="text-align:center;padding:2.5rem 1rem">
+          <div style="font-size:36px;margin-bottom:1rem">⏳</div>
+          <p style="font-size:14px;color:var(--n600)" data-th="กำลังเตรียมหน้าชำระเงิน..." data-en="Preparing payment page...">กำลังเตรียมหน้าชำระเงิน...</p>
+        </div>
+
+        <!-- PAYMENT READY -->
+        <div class="bk-card" id="qr-display" style="display:none;text-align:center">
+          <div style="font-size:42px;margin-bottom:8px">💳</div>
+          <h2 style="margin-bottom:4px" data-th="พร้อมชำระเงิน" data-en="Ready to pay">พร้อมชำระเงิน</h2>
+          <p style="font-size:13px;color:var(--n400);margin-bottom:1rem" data-th="รับชำระผ่าน QR PromptPay · บัตรเครดิต/เดบิต · Mobile Banking · e-Wallet" data-en="Accepts QR PromptPay · Credit/Debit Card · Mobile Banking · e-Wallet">รับชำระผ่าน QR PromptPay · บัตรเครดิต/เดบิต · Mobile Banking · e-Wallet</p>
+          <a id="beam-pay-link" href="#" target="_blank" rel="noopener" class="btn-book" style="text-decoration:none" onclick="onPayClicked()">
+            <span data-th="💰 ไปหน้าชำระเงิน" data-en="💰 Go to payment">💰 ไปหน้าชำระเงิน</span> <strong id="qr-amount">฿3,500</strong>
+          </a>
+          <div style="margin-top:1rem;background:var(--g50);border-radius:10px;padding:12px;font-size:12px;color:var(--g600)" data-th="หลังชำระเสร็จ กลับมาที่หน้านี้ ระบบจะตรวจสอบให้อัตโนมัติ" data-en="After paying, return to this page. The system will verify automatically.">
+            หลังชำระเสร็จ กลับมาที่หน้านี้ ระบบจะตรวจสอบให้อัตโนมัติ
+          </div>
+          <div id="pay-status" style="margin-top:1rem;font-size:13px;color:var(--n400)"></div>
+        </div>
+
+        <!-- ERROR -->
+        <div class="bk-card" id="qr-error" style="display:none;text-align:center;padding:2rem 1rem">
+          <div style="font-size:36px;margin-bottom:1rem">⚠️</div>
+          <p style="font-size:14px;color:var(--r400)" data-th="เตรียมหน้าชำระเงินไม่สำเร็จ" data-en="Failed to prepare payment page">เตรียมหน้าชำระเงินไม่สำเร็จ</p>
+          <button class="btn-primary" style="margin-top:1rem" onclick="startBeamPayment()" data-th="ลองอีกครั้ง" data-en="Try again">ลองอีกครั้ง</button>
+        </div>
+
+        <button style="width:100%;margin-top:8px;padding:12px;border:1px solid var(--n200);background:none;border-radius:var(--rad);font-size:14px;cursor:pointer;font-family:var(--font-th)" onclick="cancelPayment()" data-th="← ย้อนกลับ" data-en="← Back">← ย้อนกลับ</button>
+      </div>
+
+      <!-- STEP 3 -->
+      <div class="panel" id="p3">
+        <div class="success-wrap">
+          <div id="booking-receipt">
+            <div style="background:var(--g800);border-radius:16px;padding:1.5rem;margin-bottom:1rem;color:#fff;text-align:center;">
+              <div style="font-size:40px;margin-bottom:8px;">🚣</div>
+              <div style="font-family:var(--font-serif);font-size:18px;font-weight:700;">ศักดิ์สุภา ล่องแก่งหินเพิง</div>
+              <div style="font-size:12px;color:var(--g100);margin-top:4px;">062-5249698</div>
+              <div style="margin-top:12px;background:rgba(255,255,255,.15);border-radius:8px;padding:8px 12px;display:inline-block;">
+                <div style="font-size:11px;color:var(--g100);" data-th="เลขที่ใบจอง" data-en="Booking reference">เลขที่ใบจอง</div>
+                <div style="font-size:20px;font-weight:700;letter-spacing:.05em;" id="ref-no">—</div>
+              </div>
+            </div>
+            <div style="background:var(--n0);border-radius:16px;border:1px solid var(--n100);padding:1.25rem;text-align:left;margin-bottom:1rem;">
+              <div style="font-size:11px;font-weight:600;color:var(--n400);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px;" data-th="รายละเอียดการจอง" data-en="Booking details">รายละเอียดการจอง</div>
+              <div id="ref-detail"></div>
+            </div>
+            <div style="background:var(--a50);border:1px solid var(--a300);border-radius:10px;padding:10px 14px;font-size:12px;color:var(--a800);margin-bottom:1rem;" data-th="⚠️ กรุณาบันทึกใบจองนี้ไว้เป็นหลักฐาน" data-en="⚠️ Please save this receipt as proof of booking">
+              ⚠️ กรุณาบันทึกใบจองนี้ไว้เป็นหลักฐาน
+            </div>
+            <div style="background:var(--g50);border:1px solid var(--g100);border-radius:10px;padding:12px 14px;font-size:12px;color:var(--g600);margin-bottom:1rem;text-align:left;">
+              📍 <strong data-th="จุดนัดพบ:" data-en="Meeting point:">จุดนัดพบ:</strong> <span data-th="ศักดิ์สุภา ล่องแก่งหินเพิง" data-en="Saksupha Hin Perng Rafting">ศักดิ์สุภา ล่องแก่งหินเพิง</span><br>
+              <span style="color:var(--n400)" data-th="กดปุ่มแผนที่ด้านล่างเพื่อนำทาง" data-en="Tap the map button below for directions">กดปุ่มแผนที่ด้านล่างเพื่อนำทาง</span>
+            </div>
+            <div class="sheet-note" id="sheet-note" data-th="📊 บันทึกข้อมูลสำเร็จ" data-en="📊 Saved successfully">📊 บันทึกข้อมูลสำเร็จ</div>
+          </div>
+          <a href="https://maps.app.goo.gl/TKUEn2iRYEF5fkpC6" target="_blank" rel="noopener" class="btn-book" style="text-decoration:none;margin-top:1rem;background:var(--g400)" data-th="📍 นำทางไปจุดนัดพบ" data-en="📍 Get directions">📍 นำทางไปจุดนัดพบ</a>
+          <button class="btn-primary" style="margin-top:.75rem;width:100%;justify-content:center;background:var(--n800)" onclick="saveReceipt()" data-th="📸 บันทึกใบจองเป็นรูป" data-en="📸 Save receipt as image">📸 บันทึกใบจองเป็นรูป</button>
+          <div class="contact-bar" style="margin-top:1rem">
+            <a href="tel:0813432786" class="contact-btn" data-th="📞 สอบถาม" data-en="📞 Contact">📞 สอบถาม</a>
+            <a href="https://lin.ee/NmRS78o" target="_blank" class="contact-btn">💬 LINE OA</a>
+          </div>
+          <button class="btn-next" style="margin-top:.75rem" onclick="resetBooking()">🔄 จองใหม่</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+const SB_URL = 'https://zdzcprvzzzlwjaprwlhq.supabase.co';
+const SB_KEY = 'sb_publishable_Rg66Hht2N1vYM856jqEvMA_8P_FiJA9';
+const PRICE = 3500, CAP = 6;
+
+async function sbGet(table, query='') {
+  const r = await fetch(`${SB_URL}/rest/v1/${table}${query}`, {
+    headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
+  });
+  return r.json();
+}
+async function sbInsert(table, data) {
+  const r = await fetch(`${SB_URL}/rest/v1/${table}`, {
+    method: 'POST',
+    headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+    body: JSON.stringify(data)
+  });
+  return r.ok;
+}
+async function sbRpc(fn, args) {
+  const r = await fetch(`${SB_URL}/rest/v1/rpc/${fn}`, {
+    method: 'POST',
+    headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Content-Type': 'application/json' },
+    body: JSON.stringify(args)
+  });
+  return r.json();
+}
+
+const fmt = n => '฿' + n.toLocaleString();
+const boats = p => Math.max(1, Math.ceil(p / CAP));
+let ppl = 2, curSrc = '', curSrcName = '';
+let curChargeId = null, curRefNo = null, payPollTimer = null;
+let appliedDiscount = null; // {code, discount_type, discount_value, id}
+
+function calcTotal() {
+  const b = boats(ppl);
+  const subtotal = b * PRICE;
+  let discountAmt = 0;
+  if (appliedDiscount) {
+    discountAmt = appliedDiscount.discount_type === 'percent'
+      ? Math.round(subtotal * appliedDiscount.discount_value / 100)
+      : Math.min(appliedDiscount.discount_value, subtotal);
+  }
+  return { boats: b, subtotal, discountAmt, total: Math.max(0, subtotal - discountAmt) };
+}
+
+async function applyDiscount() {
+  const codeInput = document.getElementById('dc-input');
+  const code = codeInput.value.trim().toUpperCase();
+  const msgEl = document.getElementById('dc-msg');
+  if (!code) return;
+
+  const results = await sbGet('discount_codes', `?code=eq.${encodeURIComponent(code)}&select=*`);
+  const dc = results[0];
+
+  if (!dc) {
+    msgEl.className = 'discount-msg err';
+    msgEl.textContent = t('ไม่พบโค้ดนี้', 'Code not found');
+    appliedDiscount = null;
+    updatePriceDisplay();
+    return;
+  }
+  if (!dc.active) {
+    msgEl.className = 'discount-msg err';
+    msgEl.textContent = t('โค้ดนี้ปิดใช้งานแล้ว', 'This code is no longer active');
+    appliedDiscount = null;
+    updatePriceDisplay();
+    return;
+  }
+  if (dc.usage_limit && dc.used_count >= dc.usage_limit) {
+    msgEl.className = 'discount-msg err';
+    msgEl.textContent = t('โค้ดนี้ถูกใช้ครบจำนวนแล้ว', 'This code has reached its usage limit');
+    appliedDiscount = null;
+    updatePriceDisplay();
+    return;
+  }
+
+  appliedDiscount = dc;
+  const label = dc.discount_type === 'percent' ? `${dc.discount_value}%` : fmt(dc.discount_value);
+  msgEl.className = 'discount-msg ok';
+  msgEl.textContent = t(`✅ ใช้โค้ด ${dc.code} สำเร็จ ลด ${label}`, `✅ Code ${dc.code} applied — ${label} off`);
+  updatePriceDisplay();
+}
+
+function updatePriceDisplay() {
+  const c = calcTotal();
+  document.getElementById('boat-cnt').textContent = `× ${c.boats} ลำ`;
+  const discountLine = document.getElementById('discount-line');
+  if (c.discountAmt > 0) {
+    discountLine.style.display = 'flex';
+    document.getElementById('discount-amt').textContent = '-' + fmt(c.discountAmt);
+  } else {
+    discountLine.style.display = 'none';
+  }
+  document.getElementById('price-total').textContent = fmt(c.total);
+}
+
+function setStep(n) {
+  [1,2,3].forEach(i => {
+    const si = document.getElementById('si-'+i);
+    const p = document.getElementById('p'+i);
+    si.classList.remove('active','done');
+    p.classList.remove('active');
+    if (i < n) si.classList.add('done');
+    if (i === n) { si.classList.add('active'); p.classList.add('active'); }
+  });
+  document.getElementById('sep-12').classList.toggle('done', n > 1);
+  document.getElementById('sep-23').classList.toggle('done', n > 2);
+}
+function goStep1() { setStep(1); }
+
+function goStep2() {
+  const name = document.getElementById('b-name').value.trim();
+  const phone = document.getElementById('b-phone').value.trim();
+  const date = document.getElementById('b-date').value;
+  const time = document.getElementById('b-time').value;
+  if (!name) { alert(t('กรุณากรอกชื่อ-นามสกุล','Please enter your full name')); return; }
+  if (!/^0[0-9]{9}$/.test(phone)) { alert(t('กรุณากรอกเบอร์โทรให้ถูกต้อง (10 หลัก เช่น 0812345678)','Please enter a valid phone number (10 digits, e.g. 0812345678)')); return; }
+  if (!date) { alert(t('กรุณาเลือกวันที่','Please select a date')); return; }
+  if (time) {
+    const [h,m] = time.split(':').map(Number);
+    const mins = h*60+m;
+    if (mins < 8*60 || mins > 15*60+30) {
+      alert(t('กรุณาเลือกเวลาระหว่าง 08:00 - 15:30 น. เท่านั้น','Please choose a time between 08:00 - 15:30 only'));
+      return;
+    }
+  }
+  document.getElementById('due-amt').textContent = fmt(calcTotal().total);
+  setStep(2);
+  startBeamPayment();
+}
+
+function chgPpl(d) {
+  ppl = Math.max(1, Math.min(30, ppl+d));
+  document.getElementById('ppl-n').textContent = ppl;
+  updatePriceDisplay();
+  const b = boats(ppl);
+  document.getElementById('cap-note').textContent = b === 1
+    ? t(`บรรจุสูงสุด ${CAP} คน/ลำ`, `Max ${CAP} people/boat`)
+    : t(`${ppl} คน → ${b} ลำ (สูงสุด ${CAP} คน/ลำ)`, `${ppl} people → ${b} boats (max ${CAP}/boat)`);
+}
+
+// ── BEAM QR PAYMENT ──
+async function startBeamPayment() {
+  // reset UI
+  document.getElementById('qr-loading').style.display = 'block';
+  document.getElementById('qr-display').style.display = 'none';
+  document.getElementById('qr-error').style.display = 'none';
+  if (payPollTimer) { clearInterval(payPollTimer); payPollTimer = null; }
+
+  const c = calcTotal();
+  const b = c.boats;
+  const total = c.total;
+  const chargeAmount = total*100;  // ยอดเป็นสตางค์
+  curRefNo = 'RR-' + new Date().getFullYear() + '-' + String(Math.floor(Math.random()*9000)+1000);
+
+  try {
+    // 1. สร้าง Payment Link
+    const desc = `จองเรือล่องแก่ง ${b} ลำ (${ppl} คน)`;
+    const reqId = await sbRpc('beam_link_create', { p_amount: chargeAmount, p_ref: curRefNo, p_desc: desc });
+    // 2. ดึงผล link url
+    let result = null;
+    for (let i=0; i<15; i++) {
+      await new Promise(r => setTimeout(r, 1000));
+      const res = await sbRpc('beam_result', { p_id: reqId });
+      if (res && res.ready) { result = res; break; }
+    }
+    if (!result || !result.data || !result.data.url) { throw new Error('no link'); }
+
+    const data = result.data;
+    curChargeId = data.id || data.paymentLinkId;
+    const payUrl = data.url;
+
+    // 3. แสดงปุ่มไปจ่าย
+    document.getElementById('beam-pay-link').href = payUrl;
+    document.getElementById('qr-amount').textContent = fmt(total);
+    document.getElementById('qr-loading').style.display = 'none';
+    document.getElementById('qr-display').style.display = 'block';
+  } catch(e) {
+    document.getElementById('qr-loading').style.display = 'none';
+    document.getElementById('qr-error').style.display = 'block';
+  }
+}
+
+function onPayClicked() {
+  // ลูกค้ากดไปหน้าจ่ายแล้ว → เริ่มเช็คสถานะ
+  document.getElementById('pay-status').innerHTML = '⏳ กำลังรอการชำระเงิน... (อย่าปิดหน้านี้)';
+  startPollingPayment();
+}
+
+function startPollingPayment() {
+  if (payPollTimer) return; // กันเริ่มซ้ำ
+  let elapsed = 0;
+  payPollTimer = setInterval(async () => {
+    elapsed += 5;
+    if (elapsed > 1800) { clearInterval(payPollTimer); payPollTimer = null; return; } // หยุดหลัง 30 นาที
+    try {
+      const reqId = await sbRpc('beam_link_check', { p_link_id: curChargeId });
+      await new Promise(r => setTimeout(r, 1500));
+      const res = await sbRpc('beam_result', { p_id: reqId });
+      const st = res && res.data && res.data.status;
+      if (st === 'COMPLETED' || st === 'PAID' || st === 'SUCCEEDED') {
+        clearInterval(payPollTimer); payPollTimer = null;
+        onPaymentSuccess();
+      }
+    } catch(e) { /* ลองรอบหน้า */ }
+  }, 5000);
+}
+
+function cancelPayment() {
+  if (payPollTimer) { clearInterval(payPollTimer); payPollTimer = null; }
+  setStep(1);
+}
+
+async function onPaymentSuccess() {
+  const name = document.getElementById('b-name').value.trim();
+  const phone = document.getElementById('b-phone').value.trim();
+  const date = document.getElementById('b-date').value;
+  const time = document.getElementById('b-time').value;
+  const c = calcTotal();
+  const b = c.boats;
+  const total = c.total;
+
+  // บันทึกการจอง (จ่ายเงินแล้ว)
+  await sbInsert('bookings', {
+    ref_no: curRefNo, hotel_id: curSrc, hotel_name: curSrcName,
+    name, phone, date, time, people: ppl, boats: b,
+    amount: fmt(total), slip_image: 'PAID_BEAM:' + curChargeId
+  });
+
+  // อัปเดตจำนวนการใช้โค้ดส่วนลด
+  if (appliedDiscount) {
+    fetch(`${SB_URL}/rest/v1/discount_codes?id=eq.${appliedDiscount.id}`, {
+      method: 'PATCH',
+      headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+      body: JSON.stringify({ used_count: (appliedDiscount.used_count||0) + 1 })
+    }).catch(()=>{});
+  }
+
+  const rows = [
+    [t('👤 ชื่อ','👤 Name'), name], [t('📞 โทร','📞 Phone'), phone],
+    [t('📅 วันที่','📅 Date'), `${date} · ${time}`],
+    [t('👥 จำนวน','👥 Travelers'), `${ppl} ${t('คน','people')} · ${b} ${t('ลำ','boat(s)')}`],
+  ];
+  if (c.discountAmt > 0) {
+    rows.push([t('🏷️ ส่วนลด','🏷️ Discount'), `-${fmt(c.discountAmt)} (${appliedDiscount.code})`]);
+  }
+  rows.push(
+    [t('💰 ยอดรวม','💰 Total'), fmt(total)],
+    [t('🏨 โรงแรม','🏨 Hotel'), curSrcName],
+    [t('✅ สถานะ','✅ Status'), t('ชำระเงินแล้ว','Paid')],
+  );
+
+  document.getElementById('ref-no').textContent = curRefNo;
+  document.getElementById('ref-detail').innerHTML = rows
+    .map(([k,v]) => `<div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--n100);padding:5px 0"><span style="color:var(--n400)">${k}</span><span style="font-weight:500">${v}</span></div>`).join('');
+  document.getElementById('sheet-note').textContent = t('✅ ชำระเงินสำเร็จ บันทึกการจองแล้ว','✅ Payment successful — booking saved');
+  setStep(3);
+}
+
+function resetBooking() {
+  ppl = 2;
+  curChargeId = null; curRefNo = null;
+  appliedDiscount = null;
+  if (payPollTimer) { clearInterval(payPollTimer); payPollTimer = null; }
+  ['b-name','b-phone'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('b-date').value = new Date().toISOString().split('T')[0];
+  document.getElementById('b-time').value = '08:00';
+  document.getElementById('ppl-n').textContent = 2;
+  const dcInput = document.getElementById('dc-input');
+  if (dcInput) dcInput.value = '';
+  const dcMsg = document.getElementById('dc-msg');
+  if (dcMsg) { dcMsg.className = 'discount-msg'; dcMsg.textContent = ''; }
+  updatePriceDisplay();
+  document.getElementById('cap-note').textContent = t(`บรรจุสูงสุด ${CAP} คน/ลำ`, `Max ${CAP} people/boat`);
+  setStep(1);
+}
+
+async function saveReceipt() {
+  const el = document.getElementById('booking-receipt');
+  try {
+    const canvas = await html2canvas(el, { scale: 2, backgroundColor: '#F7F6F3', useCORS: true });
+    const a = document.createElement('a');
+    a.href = canvas.toDataURL('image/png');
+    a.download = `ใบจอง-${document.getElementById('ref-no').textContent}.png`;
+    a.click();
+  } catch(e) { alert(t('กรุณา Screenshot หน้าจอแทนครับ','Please take a screenshot instead')); }
+}
+
+// ── LANGUAGE (TH/EN TOGGLE) ──
+let currentLang = localStorage.getItem('saksupha_lang') || 'th';
+
+function t(thText, enText) {
+  return currentLang === 'en' ? enText : thText;
+}
+
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('saksupha_lang', lang);
+  applyLang();
+}
+
+function applyLang() {
+  document.getElementById('html-root').lang = currentLang;
+  document.getElementById('lang-th-btn').classList.toggle('active', currentLang === 'th');
+  document.getElementById('lang-en-btn').classList.toggle('active', currentLang === 'en');
+  document.querySelectorAll('[data-th]').forEach(el => {
+    const text = currentLang === 'en' ? el.getAttribute('data-en') : el.getAttribute('data-th');
+    if (text !== null) el.innerHTML = text;
+  });
+  const placeholders = {
+    'b-name': ['สมชาย ใจดี', 'e.g. John Smith'],
+    'b-phone': ['08X-XXX-XXXX', '08X-XXX-XXXX'],
+    'dc-input': ['เช่น SUMMER10', 'e.g. SUMMER10']
+  };
+  Object.entries(placeholders).forEach(([id, [th, en]]) => {
+    const el = document.getElementById(id);
+    if (el) el.placeholder = currentLang === 'en' ? en : th;
+  });
+  document.getElementById('page-title').textContent = t('ศักดิ์สุภา ล่องแก่งหินเพิง — จองเรือ', 'Saksupha Hin Perng Rafting — Book Now');
+  // อัปเดตค่าที่คำนวณสด (cap-note, boat-cnt ฯลฯ) ให้ตรงภาษา
+  const b = boats(ppl);
+  document.getElementById('cap-note').textContent = b === 1
+    ? t(`บรรจุสูงสุด ${CAP} คน/ลำ`, `Max ${CAP} people/boat`)
+    : t(`${ppl} คน → ${b} ลำ (สูงสุด ${CAP} คน/ลำ)`, `${ppl} people → ${b} boats (max ${CAP}/boat)`);
+}
+
+// INIT — check source from URL
+(async () => {
+  applyLang();
+  const params = new URLSearchParams(window.location.search);
+  const src = params.get('source');
+  document.getElementById('b-date').value = new Date().toISOString().split('T')[0];
+  if (!src) {
+    document.getElementById('no-hotel-msg').style.display = 'block';
+    document.getElementById('booking-area').style.display = 'none';
+    return;
+  }
+  curSrc = src;
+  const hotels = await sbGet('hotels', `?id=eq.${src}&select=name`);
+  if (!hotels[0]) {
+    document.getElementById('no-hotel-msg').style.display = 'block';
+    document.getElementById('booking-area').style.display = 'none';
+    return;
+  }
+  curSrcName = hotels[0].name;
+  document.getElementById('src-name').textContent = curSrcName;
+})();
+</script>
+</body>
+</html>
